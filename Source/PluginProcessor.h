@@ -670,6 +670,10 @@ public:
     float skewedMixFloat = 0.75f;
     float mixFloat=0.5f;
     float prevGain=0.5f;
+    
+    //==============================================================================
+    // License validation
+    bool validateLicense (const juce::String& licenseKey);
 private:
     void parameterChanged (const juce::String& parameterID, float newValue) override;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

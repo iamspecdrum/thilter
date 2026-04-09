@@ -15,16 +15,26 @@ Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor&
 {
     // Initialize license screen
     showLicenseScreen();
-    setSize (400, 300);
+    setSize (250, 250);
 }
-
+juce::File getLicenseFile() {
+    DBG("getLicenseFile ran");
+    return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+        .getChildFile("squwbs").getChildFile("license.lic");
+        
+}
+void saveLicenseFile(const juce::String& key) {
+    auto file = getLicenseFile();
+    file.getParentDirectory().createDirectory();
+    file.replaceWithText(key);
+    DBG("saveLicenseFile ran");
+    DBG(file.getFullPathName());// Better: Encrypt/Sign this data
+}
 void Squwbs4AudioProcessorEditor::showLicenseScreen()
 {
-    isLicensed = false;
-    failedAttempts = 0;  // Reset failed attempts counter
-    
     // Clear any existing components
     removeAllChildren();
+
     
     // Setup license label
     licenseLabel.setText ("Enter License Key", juce::dontSendNotification);
@@ -64,15 +74,30 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
     sendButton.setColour (juce::TextButton::textColourOffId, juce::Colours::white);
     sendButton.setColour (juce::TextButton::textColourOnId, juce::Colours::white);
     addAndMakeVisible (sendButton);
+
+    isLicensed = false;
+    isValid = false;    
+    auto file = getLicenseFile();
+    if (file.existsAsFile()) {
+        auto savedKey = file.loadFileAsString();
+    if (audioProcessor.validateLicense (savedKey)) // Implement your key verification logic
+        isLicensed = true;
+        DBG("License key from file is valid. Skipping user input validation.");
+    }
+    failedAttempts = 0;  // Reset failed attempts counter
+    
+    if (isLicensed)
+    {
+        showMainUI();
+        DBG("License validation successful. Showing main UI.");
+    }
 }
 
 void Squwbs4AudioProcessorEditor::showMainUI()
 {
-    isLicensed = true;
-    
     // Clear any existing components
     removeAllChildren();
-    
+    setSize (250, 250);
     // Configure and add the gain slider
     gainSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     gainSlider.setLookAndFeel(&myCustomLookAndFeel);
@@ -87,7 +112,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "GAIN_ID", gainSlider);
     
-    setSize (250, 250);
+    
 }
 
 void Squwbs4AudioProcessorEditor::showError (const juce::String& message)
@@ -101,14 +126,28 @@ void Squwbs4AudioProcessorEditor::showError (const juce::String& message)
 
 void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& licenseKey)
 {
-    // Call the processor's validation function
-    bool isValid = audioProcessor.validateLicense (licenseKey);
+    auto file = getLicenseFile();
+    if (file.existsAsFile()) {
+        auto savedKey = file.loadFileAsString();
+    if (audioProcessor.validateLicense (savedKey)) // Implement your key verification logic
+        isLicensed = true;
+        DBG("License key from file is valid. Skipping user input validation.");
+    }
     
-    if (isValid)
+    // Call the processor's validation function
+    if (!isLicensed) {
+        //juce::DBG("License key from file is invalid. Proceeding with user input validation.");
+         isValid = audioProcessor.validateLicense (licenseKey);
+    }
+    
+    
+    if (isLicensed||isValid)
     {
-        errorLabel.setVisible (false);
-        stopTimer();
+        //errorLabel.setVisible (false);
         showMainUI();
+        DBG("License validation successful. Showing main UI.");
+        stopTimer();
+        saveLicenseFile(licenseKey); // Save the valid key for future sessions
     }
     else
     {
@@ -200,7 +239,7 @@ void Squwbs4AudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     
-    if (isLicensed)
+    if (isLicensed||isValid)
     {
         // Main UI layout
         gainSlider.setBounds (0, 0, 250, 250);

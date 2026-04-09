@@ -30,7 +30,6 @@ public:
     void buttonClicked (juce::Button* button) override;
     void timerCallback() override;
     void textEditorReturnKeyPressed (juce::TextEditor& textEditor) override;
-
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
@@ -42,6 +41,7 @@ private:
     juce::TextButton sendButton { "Send" };
     juce::Label errorLabel;
     bool isLicensed = false;
+    bool isValid = false;
     int failedAttempts = 0;
     
     // Main UI components

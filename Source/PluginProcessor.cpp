@@ -30,21 +30,39 @@ void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, fl
     }
 }
 
-//==============================================================================
-bool Squwbs4AudioProcessor::validateLicense (const juce::String& licenseKey)
+void Squwbs4AudioProcessor::saveLicenseLocally (const juce::String& licenseKey, const juce::String& instanceId)
+{
+    auto appDataDir = juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory);
+    auto licenseFile = appDataDir.getChildFile ("squwbs")
+                                 .getChildFile ("Thilter")
+                                 .getChildFile ("license.settings");
+    if (! licenseFile.getParentDirectory().exists())
+        licenseFile.getParentDirectory().createDirectory();
+    juce::PropertiesFile::Options options;
+    options.storageFormat = juce::PropertiesFile::storeAsXML;
+    juce::PropertiesFile settings (licenseFile, options);
+    settings.setValue ("license_key", licenseKey);
+    settings.setValue ("instance_id", instanceId);
+    settings.saveIfNeeded();
+    DBG ("License saved to: " << licenseFile.getFullPathName());
+}
+
+
+bool Squwbs4AudioProcessor::activateLicense (const juce::String& licenseKey)
 {
     // TODO: Implement actual API communication with your license server
     // This is a placeholder implementation
     
     // Placeholder URL for your license validation API
     // Example: "https://your-api.com/validate-license"
-    juce::String validationUrl = "https://api.example.com/validate-license";
-    
+    //juce::String validationUrl = "https://api.example.com/validate-license";
+    juce::URL url("https://api.lemonsqueezy.com/v1/licenses/activate");
     //juce::DBG("Validating license key: " + licenseKey);
     //juce::DBG("API URL: " + validationUrl);
     
     // Placeholder: For demonstration, accept any non-empty key that starts with "VALID"
     // In production, replace this with actual HTTP request to your API
+    /*
     if (licenseKey.startsWith("VALID"))
     {
         //juce::DBG("License validation successful");
@@ -55,7 +73,73 @@ bool Squwbs4AudioProcessor::validateLicense (const juce::String& licenseKey)
         //juce::DBG("License validation failed");
         return false;
     }
+    */
+
+    url = url
+         .withParameter ("license_key", licenseKey)
+         .withParameter ("instance_name", juce::SystemStats::getComputerName());
+    juce::String pairHeaders = "Accept: application/json\n"
+                                   "Content-Type: application/x-www-form-urlencoded";
+    auto options = juce::URL::InputStreamOptions (juce::URL::ParameterHandling::inPostData)
+                        .withExtraHeaders (pairHeaders)
+                        .withConnectionTimeoutMs (10000);
+
+    // 4. Send the request (usually on a background thread)
+    if (auto stream = url.createInputStream (options))
+    {
+        auto response = stream->readEntireStreamAsString();
+        auto json = juce::JSON::parse (response);
+        if ((bool)json["activated"])
+        {
+            // Store the instance ID for future validation
+            auto instanceId = json["instance"]["id"].toString();
+            
+            saveLicenseLocally(licenseKey, instanceId);
+            DBG("Activation Successful! Instance ID: " << instanceId);
+            return true;
+        }
+        else
+        {
+            DBG(json.toString());
+            DBG("Activation Failed: " << json["error"].toString());
+            return false;
+        }
+    }
 }
+//==============================================================================
+bool Squwbs4AudioProcessor::validateLicense (const juce::String& licenseKey, const juce::String& instanceId)
+{
+    juce::URL url("https://api.lemonsqueezy.com/v1/licenses/validate");
+    url = url.withParameter("license_key", licenseKey)
+             .withParameter("instance_id", instanceId);
+
+    auto options = juce::URL::InputStreamOptions (juce::URL::ParameterHandling::inPostData)
+                        .withExtraHeaders ("Accept: application/json");
+
+    if (auto stream = url.createInputStream (options))
+    {
+        auto json = juce::JSON::parse (stream->readEntireStreamAsString());
+        
+        bool isValid = (bool)json["valid"];
+        bool sameName = json["instance"]["name"].toString()==juce::SystemStats::getComputerName();
+        if (isValid&&sameName)
+        {
+             DBG("License is still active.");
+             return true;
+        }
+        else
+        {
+            if(isValid){
+                DBG("computer name not matching");
+            }
+            else{
+                DBG("License invalid or expired.");
+            }
+            return false;
+        }
+    }
+}
+
 
 //==============================================================================
 const juce::String Squwbs4AudioProcessor::getName() const

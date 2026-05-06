@@ -20,7 +20,7 @@ Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor&
 juce::File getLicenseFile() {
     DBG("getLicenseFile ran");
     return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
-        .getChildFile("squwbs").getChildFile("license.lic");
+        .getChildFile("squwbs").getChildFile("Thilter").getChildFile("license.settings");
         
 }
 void saveLicenseFile(const juce::String& key) {
@@ -29,6 +29,69 @@ void saveLicenseFile(const juce::String& key) {
     file.replaceWithText(key);
     DBG("saveLicenseFile ran");
     DBG(file.getFullPathName());// Better: Encrypt/Sign this data
+}
+/*
+void saveLicenseLocally (const juce::String& licenseKey, const juce::String& instanceId)
+{
+
+    auto appDataDir = juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory);
+
+    // 2. Build the full path: AppData / CompanyName / AppName / license.settings
+    // Use getChildFile to ensure platform-specific separators are handled correctly
+    auto licenseFile = appDataDir.getChildFile ("squwbs")
+                                 .getChildFile ("Thilter")
+                                 .getChildFile ("license.settings");
+
+    // 3. Ensure the parent directories exist before saving
+    if (! licenseFile.getParentDirectory().exists())
+        licenseFile.getParentDirectory().createDirectory();
+
+    // 4. Setup Options (Options are still needed for the storage format)
+    juce::PropertiesFile::Options options;
+    options.storageFormat = juce::PropertiesFile::storeAsXML;
+
+    // 5. Create PropertiesFile by passing the exact File object
+    juce::PropertiesFile settings (licenseFile, options);
+
+    // 6. Save the data
+    settings.setValue ("license_key", licenseKey);
+    settings.setValue ("instance_id", instanceId);
+    settings.saveIfNeeded();
+    
+    DBG ("License saved to: " << licenseFile.getFullPathName());
+
+}
+*/
+struct LicenseData { juce::String key; juce::String instance; };
+
+LicenseData loadLicenseLocally()
+{
+// 1. Reconstruct the exact same path used in saveLicenseLocally
+    auto appDataDir = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory);
+    auto licenseFile = appDataDir.getChildFile("squwbs")
+                                 .getChildFile("Thilter")
+                                 .getChildFile("license.settings");
+
+    // 2. Check if the file actually exists
+    if (!licenseFile.existsAsFile())
+    {
+        DBG("No license file found at: " << licenseFile.getFullPathName());
+        return { "", "" }; // Return empty strings if file doesn't exist
+    }
+
+    // 3. Setup the same options (matching the storage format)
+    juce::PropertiesFile::Options options;
+    options.storageFormat = juce::PropertiesFile::storeAsXML;
+
+    // 4. Load the file
+    juce::PropertiesFile settings (licenseFile, options);
+
+    // 5. Retrieve values (providing an empty string as the default if key isn't found)
+    LicenseData data;
+    data.key        = settings.getValue("license_key", "");
+    data.instance = settings.getValue("instance_id", "");
+
+    return data;
 }
 void Squwbs4AudioProcessorEditor::showLicenseScreen()
 {
@@ -76,7 +139,8 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
     addAndMakeVisible (sendButton);
 
     isLicensed = false;
-    isValid = false;    
+    isValid = false;   
+    /*
     auto file = getLicenseFile();
     if (file.existsAsFile()) {
         auto savedKey = file.loadFileAsString();
@@ -91,6 +155,20 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
         showMainUI();
         DBG("License validation successful. Showing main UI.");
     }
+    */
+    auto file = getLicenseFile();
+    if(file.existsAsFile())
+    {
+        auto data = loadLicenseLocally();
+        if (audioProcessor.validateLicense (data.key,data.instance)) // Implement your key verification logic
+        {
+            isLicensed = true;
+            DBG("License key from file is valid. Skipping user input validation.");
+            showMainUI();
+            DBG("License validation successful. Showing main UI.");
+        }
+    }
+
 }
 
 void Squwbs4AudioProcessorEditor::showMainUI()
@@ -123,7 +201,7 @@ void Squwbs4AudioProcessorEditor::showError (const juce::String& message)
     errorLabel.setColour (juce::Label::textColourId, juce::Colours::white.withAlpha (errorAlpha));
     startTimerHz (30);
 }
-
+/*
 void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& licenseKey)
 {
     auto file = getLicenseFile();
@@ -171,7 +249,57 @@ void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& l
         }
     }
 }
+*/
 
+void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& licenseKey)
+{
+    auto file = getLicenseFile();
+    DBG("file exitsts "+file.existsAsFile());
+    if (file.existsAsFile()) {
+        auto data = loadLicenseLocally();
+        if (audioProcessor.validateLicense (data.key,data.instance)){
+            isLicensed = true;
+            DBG("License key from file is valid. Skipping user input validation.");
+        }   
+    }
+    
+    // Call the processor's validation function
+    if (!isLicensed) {
+        //juce::DBG("License key from file is invalid. Proceeding with user input validation.");
+         isValid = audioProcessor.activateLicense (licenseKey);
+    }
+    
+    
+    if (isLicensed||isValid)
+    {
+        //errorLabel.setVisible (false);
+        showMainUI();
+        DBG("License validation successful. Showing main UI.");
+        stopTimer();
+        //saveLicenseFile(licenseKey); // Save the valid key for future sessions
+    }
+    else
+    {
+        failedAttempts++;
+        
+        if (failedAttempts >= 5)
+        {
+            // Lock the input and show reload message
+            licenseKeyInput.setReadOnly (true);
+            licenseKeyInput.setText ("");
+            sendButton.setEnabled (false);
+            errorLabel.setText ("Too many failed attempts. Please reload the plugin to try again.", juce::dontSendNotification);
+            errorLabel.setColour (juce::Label::textColourId, juce::Colour (230, 100, 100));
+            errorLabel.setVisible (true);
+            stopTimer();  // Make sure any fading timer is stopped
+        }
+        else
+        {
+            showError ("Invalid license key");
+            licenseKeyInput.setText ("");
+        }
+    }
+}
 
 Squwbs4AudioProcessorEditor::~Squwbs4AudioProcessorEditor()
 {

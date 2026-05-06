@@ -673,7 +673,9 @@ public:
     
     //==============================================================================
     // License validation
-    bool validateLicense (const juce::String& licenseKey);
+    bool validateLicense (const juce::String& licenseKey, const juce::String& instanceId);
+    bool activateLicense (const juce::String& licenseKey);
+    void saveLicenseLocally (const juce::String& licenseKey, const juce::String& instanceId);
 private:
     void parameterChanged (const juce::String& parameterID, float newValue) override;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

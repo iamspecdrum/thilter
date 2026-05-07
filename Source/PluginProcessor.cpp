@@ -135,6 +135,11 @@ bool Squwbs4AudioProcessor::validateLicense (const juce::String& licenseKey, con
             else{
                 DBG("License invalid or expired.");
             }
+            auto appDataDir = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory);
+            auto licenseFile = appDataDir.getChildFile("squwbs")
+                .getChildFile("Thilter")
+                .getChildFile("license.settings");
+            licenseFile.deleteFile();
             return false;
         }
     }

@@ -314,8 +314,8 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             float right = main.getSample(0, j);
             float doubledRight = doubler.process(right);
             if(skewedMixFloat==prevGain){
-                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
-                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                main.setSample(0, j, volFloat*(eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
+                main.setSample(1, j, volFloat*(eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
                 //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, eq1.match(left,right)[0]);
@@ -325,8 +325,8 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             }
             else{
                 prevGain=prevGain+increment;
-                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
-                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                main.setSample(0, j, volFloat*(eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
+                main.setSample(1, j, volFloat*(eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*prevGain+left*(1.0-prevGain)));
                 //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*prevGain+doubledRight*(1.0-prevGain)));
             }
@@ -361,8 +361,8 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             float doubledRight = doubler.process(right);
             
             if(skewedMixFloat==prevGain){
-                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
-                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                main.setSample(0, j, volFloat*(eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
+                main.setSample(1, j, volFloat*(eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
                 //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, eq1.match(left,right)[0]);
@@ -372,8 +372,8 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             }
             else{
                 prevGain=prevGain+increment;
-                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
-                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                main.setSample(0, j, volFloat*(eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
+                main.setSample(1, j, volFloat*(eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*prevGain+left*(1.0-prevGain)));
                 //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*prevGain+doubledRight*(1.0-prevGain)));
             }

@@ -14,11 +14,14 @@
 #include <stdio.h>
 #include <assert.h>
 #include <memory>
+#include "AdvancedLimiter.h"
 #define PI 3.14159265
 //==============================================================================
 
 /**
 */
+
+
 
 class DefaultLimiter
 {
@@ -958,6 +961,8 @@ public:
     AudioDoubler doubler;
     DefaultLimiter limiterl;
     DefaultLimiter limiterr;
+    AdvancedLimiter advLimiterL;
+    AdvancedLimiter advLimiterR;
 
     float skewedMixFloat = 0.75f;
     float mixFloat=0.5f;
@@ -978,7 +983,7 @@ private:
     std::atomic<float>* gainParameter = nullptr;
     //std::atomic<float>* LPParameter = nullptr;
     std::atomic<float>* volParameter = nullptr;
-    std::atomic<float>* doublerParameter = nullptr;
+    std::atomic<float>* widthParameter = nullptr;
 
     juce::UndoManager undoManager;
     //==============================================================================

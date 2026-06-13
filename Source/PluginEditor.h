@@ -54,7 +54,7 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachment;
     //std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> LPAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> doublerAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> widthAttachment;
     
     void showLicenseScreen();
     void showMainUI();

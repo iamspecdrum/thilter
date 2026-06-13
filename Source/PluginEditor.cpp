@@ -216,8 +216,8 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     volAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "VOL_ID", volSlider);
     //LPAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (audioProcessor.parameters, "LP_ID", LPSlider);
-    doublerAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
-    audioProcessor.parameters, "DOUBLER_ID", doublerSlider);
+    widthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+    audioProcessor.parameters, "WIDTH_ID", doublerSlider);
     
     
 }

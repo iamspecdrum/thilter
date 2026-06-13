@@ -10,6 +10,10 @@
       <FILE id="Oc3Ghz" name="prev_knob.png" compile="0" resource="1" file="Source/resources/prev_knob.png"/>
     </GROUP>
     <GROUP id="{5F4CBACC-4335-284C-CCF6-CC2176757CA0}" name="Source">
+      <FILE id="tXymTP" name="AdvancedLimiter.cpp" compile="1" resource="0"
+            file="Source/AdvancedLimiter.cpp"/>
+      <FILE id="RjfRE2" name="AdvancedLimiter.h" compile="0" resource="0"
+            file="Source/AdvancedLimiter.h"/>
       <FILE id="QHfupE" name="customKnob.h" compile="0" resource="0" file="Source/customKnob.h"/>
       <FILE id="C8tsX9" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

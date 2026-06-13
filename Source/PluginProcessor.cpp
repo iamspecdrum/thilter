@@ -21,8 +21,8 @@ parameters (*this, &undoManager, "Parameters", createParameterLayout())
     volParameter = parameters.getRawParameterValue("VOL_ID");
     //parameters.addParameterListener("LP_ID",this);
     //LPParameter = parameters.getRawParameterValue("LP_ID");
-    parameters.addParameterListener("DOUBLER_ID",this);
-    doublerParameter = parameters.getRawParameterValue("DOUBLER_ID");
+    parameters.addParameterListener("WIDTH_ID",this);
+    widthParameter = parameters.getRawParameterValue("WIDTH_ID");
 }
 
 Squwbs4AudioProcessor::~Squwbs4AudioProcessor()
@@ -30,7 +30,7 @@ Squwbs4AudioProcessor::~Squwbs4AudioProcessor()
     parameters.removeParameterListener("GAIN_ID",this);
     parameters.removeParameterListener("VOL_ID",this);
     //parameters.removeParameterListener("LP_ID",this);
-    parameters.removeParameterListener("DOUBLER_ID",this);
+    parameters.removeParameterListener("WIDTH_ID",this);
 }
 void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
@@ -48,7 +48,7 @@ void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, fl
         juce::ignoreUnused(newValue);
     }
     */
-    if(parameterID == "DOUBLER_ID")
+    if(parameterID == "WIDTH_ID")
     {
         juce::ignoreUnused(newValue);
     }
@@ -254,6 +254,9 @@ void Squwbs4AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     lowPassRight.prepare(spec);
     lowPassLeft.reset();
     lowPassRight.reset();
+    advLimiterL.prepareToPlay(sampleRate, samplesPerBlock);
+    advLimiterR.prepareToPlay(sampleRate, samplesPerBlock);
+
 }
 
 void Squwbs4AudioProcessor::releaseResources()
@@ -323,7 +326,7 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             //currentCutoff = LPParameter->load();
             lpl.set(currentCutoff);
             lpr.set(currentCutoff);
-            doublerWet = doublerParameter->load();
+            doublerWet = widthParameter->load();
             doubler.setMix(doublerWet);
             if (mixFloat<=0.5){
                 skewedMixFloat = mixFloat*3/2;
@@ -342,16 +345,20 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             {
                 //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
                 //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                main.setSample(0, j, wetLeft);
-                main.setSample(1, j, wetRight);
+                //main.setSample(0, j, wetLeft);
+                //main.setSample(1, j, wetRight);
+                main.setSample(0, j, advLimiterL.processSample(wetLeft));
+                main.setSample(1, j, advLimiterR.processSample(wetRight));
             }
             else
             {
                 prevGain += increment;
                 //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
                 //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                main.setSample(0, j, wetLeft);
-                main.setSample(1, j, wetRight);
+                //main.setSample(0, j, wetLeft);
+                //main.setSample(1, j, wetRight);
+                main.setSample(0, j, advLimiterL.processSample(wetLeft));
+                main.setSample(1, j, advLimiterR.processSample(wetRight));
             }
         }
     }
@@ -370,7 +377,7 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             //currentCutoff = LPParameter->load();
             lpl.set(currentCutoff);
             lpr.set(currentCutoff);
-            doublerWet = doublerParameter->load();
+            doublerWet = widthParameter->load();
             doubler.setMix(doublerWet);
             if (mixFloat<=0.5){
                 skewedMixFloat = mixFloat*3/2;
@@ -389,16 +396,16 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             {
                 //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
                 //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                main.setSample(0, j, wetLeft);
-                main.setSample(1, j, wetRight);
+                main.setSample(0, j, advLimiterL.processSample(wetLeft));
+                main.setSample(1, j, advLimiterR.processSample(wetRight));
             }
             else
             {
                 prevGain += increment;
                 //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
                 //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                main.setSample(0, j, wetLeft);
-                main.setSample(1, j, wetRight);
+                main.setSample(0, j, advLimiterL.processSample(wetLeft));
+                main.setSample(1, j, advLimiterR.processSample(wetRight));
             }
         }
     }
@@ -485,10 +492,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout Squwbs4AudioProcessor::creat
         1.0f                               // Default value (false = not bypassed)
     ));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
-        juce::ParameterID { "DOUBLER_ID", 1 },
-        "DOUBLER",
+        juce::ParameterID { "WIDTH_ID", 1 },
+        "WIDTH",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), // min, max, step
-        0.0f                               // Default value (false = not bypassed)
+        0.5f                               // Default value (false = not bypassed)
     ));
 
     

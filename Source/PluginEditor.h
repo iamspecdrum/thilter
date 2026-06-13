@@ -46,9 +46,15 @@ private:
     
     // Main UI components
     juce::Slider gainSlider;
+    juce::Slider LPSlider;
+    juce::Slider doublerSlider;
+    juce::Slider volSlider;
     CustomRotaryKnobLookAndFeel myCustomLookAndFeel;
     juce::Label gainLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> LPAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> doublerAttachment;
     
     void showLicenseScreen();
     void showMainUI();

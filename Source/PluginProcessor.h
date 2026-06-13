@@ -19,6 +19,291 @@
 
 /**
 */
+
+class DefaultLimiter
+{
+public:
+    DefaultLimiter()
+    : threshold(0.95f),
+      attack(0.002f),
+      release(0.08f),
+      env(0.0f),
+      gain(1.0f),
+      sampleRate(48000.0f)
+    {
+    }
+
+    ~DefaultLimiter()
+    {
+    }
+    void Init() {
+        threshold = 0.95f;
+        attack = 0.002f;
+        release = 0.08f;
+        env = 0.0f;
+        gain = 1.0f;
+        sampleRate = 48000.0f;
+    }
+    float process(float inputValue)
+    {
+        float inputAbs = fabsf(inputValue);
+
+        if(inputAbs > env)
+            env += attack * (inputAbs - env);
+        else
+            env += release * (inputAbs - env);
+
+        float targetGain = 1.0f;
+        if(env > threshold)
+            targetGain = threshold / env;
+
+        if(targetGain < 0.0f)
+            targetGain = 0.0f;
+
+        if(targetGain > gain)
+            gain += attack * (targetGain - gain);
+        else
+            gain += release * (targetGain - gain);
+
+        float output = inputValue * gain;
+
+        // Soft clip to keep peaks from overshooting after gain reduction.
+        if(output > 1.0f)
+            output = 1.0f - expf(-output);
+        else if(output < -1.0f)
+            output = -1.0f + expf(output);
+
+        return output;
+    }
+
+    void set(float newThreshold)
+    {
+        threshold = newThreshold;
+    }
+
+    void setThreshold(float newThreshold)
+    {
+        threshold = newThreshold;
+    }
+
+    void setAttack(float newAttack)
+    {
+        attack = newAttack;
+    }
+
+    void setRelease(float newRelease)
+    {
+        release = newRelease;
+    }
+
+    void setSampleRate(float sr)
+    {
+        sampleRate = sr;
+    }
+
+private:
+    float threshold;
+    float attack;
+    float release;
+    float env;
+    float gain;
+    float sampleRate;
+};
+
+
+class LP24
+{
+public:
+    LP24():
+    cutoff(0.1f),
+    resonance(0.0),
+    buf0(0.0),
+    buf1(0.0),
+    buf2(0.0),
+    buf3(0.0),
+    sampleRate(48000.0f)
+    {
+       calculateFeedbackAmount();
+    }
+
+    ~LP24()
+    {
+    }
+    void Init() {
+        cutoff = 20000.0;
+        resonance = 0.0;
+        buf0 = 0.0;
+        buf1 = 0.0;
+        buf2 = 0.0;
+        buf3 = 0.0;
+        calculateFeedbackAmount();
+    }
+    float process(float inputValue){
+        buf0 += cutoff * (inputValue - buf0);
+        buf1 += cutoff * (buf0 - buf1);
+        buf2 += cutoff * (buf1 - buf2);
+        buf3 += cutoff * (buf2 - buf3);
+    return buf3;
+    };
+    void set(float newCutoff) {
+        if(sampleRate <= 0.0f)
+            sampleRate = 48000.0f;
+
+        if(newCutoff <= 0.0f)
+            cutoff = 0.0f;
+        else
+            cutoff = 1.0f - expf(-2.0f * PI * newCutoff / sampleRate);
+
+        cutoff = fminf(0.999f, fmaxf(0.0f, cutoff));
+        calculateFeedbackAmount();
+    };
+    void setResonance(float newResonance){
+        resonance = newResonance;
+        calculateFeedbackAmount();
+    };
+    void setSampleRate(float sr){
+        sampleRate=sr;
+    };
+private:
+    float cutoff;
+    float resonance;
+    float feedbackAmount;
+    void calculateFeedbackAmount() {
+        feedbackAmount = resonance + resonance/(1.0 - cutoff);
+    };
+    float buf0;
+    float buf1;
+    float buf2;
+    float buf3;
+    float sampleRate;
+};
+
+class AudioDoubler
+{
+public:
+    AudioDoubler()
+    : delayMs(4.0f),
+      feedback(0.25f),
+      wetMix(0.0f),
+      dryMix(1.0f),
+      sampleRate(48000.0f),
+      delaySamples(192),
+      delaySamplesAlt(193),
+      writeIndex(0),
+      writeIndexAlt(0)
+    {
+        Init();
+    }
+
+    ~AudioDoubler()
+    {
+    }
+
+    void Init()
+    {
+        delayMs = 4.0f;
+        feedback = 0.25f;
+        wetMix = 0.0f;
+        dryMix = 1.0f;
+        sampleRate = 48000.0f;
+
+        for(int i = 0; i < kMaxDelaySamples; ++i)
+        {
+            buffer[i] = 0.0f;
+            bufferAlt[i] = 0.0f;
+        }
+
+        writeIndex = 0;
+        writeIndexAlt = 0;
+        updateDelay();
+    }
+
+    float process(float inputValue)
+    {
+        if(delaySamples < 1)
+            updateDelay();
+
+        const int readIndex = (writeIndex + (kMaxDelaySamples - delaySamples))
+                              % kMaxDelaySamples;
+        const int readIndexAlt
+            = (writeIndexAlt + (kMaxDelaySamples - delaySamplesAlt))
+              % kMaxDelaySamples;
+
+        const float delayed0 = buffer[readIndex];
+        const float delayed1 = bufferAlt[readIndexAlt];
+
+        const float wet = (delayed0 * 0.55f) + (delayed1 * 0.45f);
+        const float output = (inputValue * dryMix) + (wet * wetMix);
+
+        buffer[writeIndex] = inputValue + (feedback * delayed0);
+        bufferAlt[writeIndexAlt] = inputValue + (feedback * delayed1);
+
+        writeIndex = (writeIndex + 1) % kMaxDelaySamples;
+        writeIndexAlt = (writeIndexAlt + 1) % kMaxDelaySamples;
+
+        return output;
+    }
+
+    void set(float newDelayMs)
+    {
+        delayMs = newDelayMs;
+        updateDelay();
+    }
+
+    void setMix(float newMix)
+    {
+        wetMix = fminf(1.0f, fmaxf(0.0f, newMix));
+        dryMix = 1.0f - wetMix;
+    }
+
+    void setFeedback(float newFeedback)
+    {
+        feedback = fminf(0.95f, fmaxf(0.0f, newFeedback));
+    }
+
+    void setSampleRate(float sr)
+    {
+        if(sr <= 0.0f)
+            sr = 48000.0f;
+
+        sampleRate = sr;
+        updateDelay();
+    }
+
+private:
+    static const int kMaxDelaySamples = 4096;
+
+    float delayMs;
+    float feedback;
+    float wetMix;
+    float dryMix;
+    float sampleRate;
+
+    int delaySamples;
+    int delaySamplesAlt;
+    int writeIndex;
+    int writeIndexAlt;
+
+    float buffer[kMaxDelaySamples];
+    float bufferAlt[kMaxDelaySamples];
+
+    void updateDelay()
+    {
+        if(sampleRate <= 0.0f)
+            sampleRate = 48000.0f;
+
+        delaySamples = static_cast<int>(sampleRate * (delayMs * 0.001f));
+        if(delaySamples < 1)
+            delaySamples = 1;
+        if(delaySamples >= kMaxDelaySamples)
+            delaySamples = kMaxDelaySamples - 1;
+
+        delaySamplesAlt = delaySamples + 1;
+        if(delaySamplesAlt >= kMaxDelaySamples)
+            delaySamplesAlt = kMaxDelaySamples - 1;
+    }
+};
+
 class L_Riley_LP
 {
 
@@ -666,10 +951,18 @@ public:
     juce::AudioProcessorValueTreeState parameters;
     ThreeBandEQ eq1;
     ThreeBandEQ eq2;
+    LP24 lpl;
+    LP24 lpr;
+    AudioDoubler doubler;
+    DefaultLimiter limiterl;
+    DefaultLimiter limiterr;
 
     float skewedMixFloat = 0.75f;
     float mixFloat=0.5f;
     float prevGain=0.5f;
+    float volFloat=1.0f;
+    float currentCutoff=20000.0f;
+    float doublerWet=0.0f;
     
     //==============================================================================
     // License validation
@@ -680,6 +973,9 @@ private:
     void parameterChanged (const juce::String& parameterID, float newValue) override;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     std::atomic<float>* gainParameter = nullptr;
+    std::atomic<float>* LPParameter = nullptr;
+    std::atomic<float>* volParameter = nullptr;
+    std::atomic<float>* doublerParameter = nullptr;
 
     juce::UndoManager undoManager;
     //==============================================================================

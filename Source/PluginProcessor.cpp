@@ -16,15 +16,36 @@ parameters (*this, &undoManager, "Parameters", createParameterLayout())
 {
     parameters.addParameterListener("GAIN_ID",this);
     gainParameter = parameters.getRawParameterValue("GAIN_ID");
+    parameters.addParameterListener("VOL_ID",this);
+    volParameter = parameters.getRawParameterValue("VOL_ID");
+    parameters.addParameterListener("LP_ID",this);
+    LPParameter = parameters.getRawParameterValue("LP_ID");
+    parameters.addParameterListener("DOUBLER_ID",this);
+    doublerParameter = parameters.getRawParameterValue("DOUBLER_ID");
 }
 
 Squwbs4AudioProcessor::~Squwbs4AudioProcessor()
 {
     parameters.removeParameterListener("GAIN_ID",this);
+    parameters.removeParameterListener("VOL_ID",this);
+    parameters.removeParameterListener("LP_ID",this);
+    parameters.removeParameterListener("DOUBLER_ID",this);
 }
 void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
     if(parameterID == "GAIN_ID")
+    {
+        juce::ignoreUnused(newValue);
+    }
+    if(parameterID == "VOL_ID")
+    {
+        juce::ignoreUnused(newValue);
+    }
+    if(parameterID == "LP_ID")
+    {
+        juce::ignoreUnused(newValue);
+    }
+    if(parameterID == "DOUBLER_ID")
     {
         juce::ignoreUnused(newValue);
     }
@@ -215,6 +236,12 @@ void Squwbs4AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     // initialisation that you need..
     eq1.setSampleRate(sampleRate);
     eq2.setSampleRate(sampleRate);
+    lpl.setSampleRate(sampleRate);
+    lpr.setSampleRate(sampleRate);
+    doubler.setSampleRate(sampleRate);
+    limiterl.setSampleRate(sampleRate);
+    limiterr.setSampleRate(sampleRate);
+    
 }
 
 void Squwbs4AudioProcessor::releaseResources()
@@ -268,9 +295,14 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         for (int j = 0; j<main.getNumSamples(); ++j)
         {
             
-            mixFloat = gainParameter->load()/100.0;
+            mixFloat = gainParameter->load();
             //std::cout<<mixFloat<<std::endl;
-            
+            volFloat = volParameter->load();
+            currentCutoff = LPParameter->load();
+            lpl.set(currentCutoff);
+            lpr.set(currentCutoff);
+            doublerWet = doublerParameter->load();
+            doubler.setMix(doublerWet);
             if (mixFloat<=0.5){
                 skewedMixFloat = mixFloat*3/2;
             }
@@ -280,10 +312,12 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             float increment = (skewedMixFloat-prevGain)/float(main.getNumSamples());
             float left = main.getSample(0, j);
             float right = main.getSample(0, j);
-
+            float doubledRight = doubler.process(right);
             if(skewedMixFloat==prevGain){
-                main.setSample(0, j, eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
-                main.setSample(1, j, eq2.match(left,right)[1]*64.0*skewedMixFloat+right*(1.0-skewedMixFloat));
+                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
+                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
+                //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
                 //main.setSample(0, j, eq1.match(left,right)[0]);
                 //main.setSample(1, j, eq1.match(left,right)[1]);
                 //main.setSample(0, j, eq1.match(left,right)[0]*64.0*skewedMixFloat);
@@ -291,8 +325,10 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             }
             else{
                 prevGain=prevGain+increment;
-                main.setSample(0, j, eq1.match(left,right)[0]*64.0*prevGain+left*(1.0-prevGain));
-                main.setSample(1, j, eq2.match(left,right)[1]*64.0*prevGain+right*(1.0-prevGain));
+                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
+                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*prevGain+left*(1.0-prevGain)));
+                //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*prevGain+doubledRight*(1.0-prevGain)));
             }
         }
     }
@@ -307,6 +343,12 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             
             mixFloat = gainParameter->load();
             //std::cout<<mixFloat<<std::endl;
+            volFloat = volParameter->load();
+            currentCutoff = LPParameter->load();
+            lpl.set(currentCutoff);
+            lpr.set(currentCutoff);
+            doublerWet = doublerParameter->load();
+            doubler.setMix(doublerWet);
             if (mixFloat<=0.5){
                 skewedMixFloat = mixFloat*3/2;
             }
@@ -316,16 +358,24 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             float increment = (skewedMixFloat-prevGain)/float(main.getNumSamples());
             float left = main.getSample(0, j);
             float right = main.getSample(1, j);
+            float doubledRight = doubler.process(right);
+            
             if(skewedMixFloat==prevGain){
-                main.setSample(0, j, eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
-                main.setSample(1, j, eq2.match(left,right)[1]*64.0*skewedMixFloat+right*(1.0-skewedMixFloat));
-                
-                
+                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
+                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat)));
+                //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat)));
+                //main.setSample(0, j, eq1.match(left,right)[0]);
+                //main.setSample(1, j, eq1.match(left,right)[1]);
+                //main.setSample(0, j, eq1.match(left,right)[0]*64.0*skewedMixFloat);
+                //main.setSample(1, j, eq2.match(left,right)[1]*64.0*skewedMixFloat);
             }
             else{
                 prevGain=prevGain+increment;
-                main.setSample(0, j, eq1.match(left,right)[0]*64.0*prevGain+left*(1.0-prevGain));
-                main.setSample(1, j, eq2.match(left,right)[1]*64.0*prevGain+right*(1.0-prevGain));
+                main.setSample(0, j, volFloat*eq1.match(left,right)[0]*64.0*skewedMixFloat+left*(1.0-skewedMixFloat));
+                main.setSample(1, j, volFloat*eq2.match(left,right)[1]*64.0*skewedMixFloat+doubledRight*(1.0-skewedMixFloat));
+                //main.setSample(0, j, volFloat*lpl.process(eq1.match(left,doubledRight)[0]*64.0*prevGain+left*(1.0-prevGain)));
+                //main.setSample(1, j, volFloat*lpr.process(eq2.match(left,doubledRight)[1]*64.0*prevGain+doubledRight*(1.0-prevGain)));
             }
         }
     }
@@ -366,12 +416,59 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout Squwbs4AudioProcessor::createParameterLayout()
 {
     // You can use a braced-list initializer for a clean definition
+    /*
     return {
+        
         std::make_unique<juce::AudioParameterFloat>(
             juce::ParameterID("GAIN_ID", 1),    // Parameter ID and version
             "DRY/WET",                             // Display name
             juce::NormalisableRange<float>(0.0f, 1.0f,0.01f),// Range
             0.5f                                // Default value
         )
+         
+        // Create a vector to hold the parameters
+            
     };
+    */
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    // Example 1: Standard Linear Float Parameter (Gain)
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID { "GAIN_ID", 1 },     // Parameter ID and version
+        "DRY/WET",                              // Parameter Name (UI visible)
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), // min, max, step
+        0.5f                                 // Default value
+    ));
+
+    // Example 2: Logarithmic Float Parameter (Filter Cutoff Frequency)
+    // Using a skew factor of 0.3f to give more physical knob resolution to lower frequencies
+    
+    
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID { "LP_ID", 1 },
+        "LOWPASS",
+        juce::NormalisableRange<float> (20.0f, 20000.0f, 1.0f),
+        20000.0f
+    ));
+    
+    // Example 3: Boolean Parameter (Bypass Switch)
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID { "VOL_ID", 1 },
+        "VOLUME",
+        juce::NormalisableRange<float>(0.0f, 9.0f, 0.1f), // min, max, step
+        1.0f                               // Default value (false = not bypassed)
+    ));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID { "DOUBLER_ID", 1 },
+        "DOUBLER",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), // min, max, step
+        0.0f                               // Default value (false = not bypassed)
+    ));
+
+    
+
+    // Move the vector into the ParameterLayout object and return it
+    return { params.begin(), params.end() };
+
 }

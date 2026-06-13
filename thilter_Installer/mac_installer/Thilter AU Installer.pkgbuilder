@@ -7,29 +7,22 @@
         ],
         "files" : [
           {
-            "destination" : "\/Library\/Audio\/Plug-Ins\/Components",
+            "destination" : "\/Library\/Components",
             "source" : {
               "absoluteFilePath" : "\/Users\/bernardahn\/Desktop\/code\/thilter\/Builds\/MacOSX\/build\/Release\/thilter.component"
             },
-            "uid" : "cpvfolvath"
-          },
-          {
-            "destination" : "\/Library\/Audio\/Plug-Ins\/VST3",
-            "source" : {
-              "absoluteFilePath" : "\/Users\/bernardahn\/Desktop\/code\/thilter\/Builds\/MacOSX\/build\/Release\/thilter.vst3"
-            },
-            "uid" : "ocgiedjgls"
+            "uid" : "niclyqvqkw"
           }
         ],
         "identifier" : "com.squwbs.thilter",
         "name" : "thilter",
-        "requireAdminPassword" : true,
+        "requireAdminPassword" : false,
         "requireAfterInstall" : "none",
         "requireAppsNotRunning" : [
 
         ],
         "selectedByDefault" : true,
-        "uid" : "uxmvaedtuz",
+        "uid" : "bitbkxfqvy",
         "version" : "1.0.0"
       }
     ],
@@ -39,13 +32,11 @@
     "gatekeeperScheme" : "none",
     "identifier" : "com.squwbs.thilter",
     "licenseContent" : {
-      "en" : {
-        "relativeFilePath" : "..\/..\/..\/Downloads\/END USER LICENSE AGREEMENT (EULA).txt"
-      }
+
     },
-    "name" : "thilter",
+    "name" : "Thilter AU",
     "options" : {
-      "allowedDestinations" : "anyDisk,startUpDisk,userFolder",
+      "allowedDestinations" : "startUpDisk,userFolder",
       "architectures" : "arm64",
       "installChoiceCustomization" : "always",
       "installScriptAllowsExternalScripts" : false,
@@ -54,8 +45,7 @@
     "readmeContent" : {
 
     },
-    "suggestedFilePath" : "\/Users\/bernardahn\/Desktop\/code\/Thilter_Installer\/thilter.pkg",
-    "uid" : "lgdnyoavjj",
+    "uid" : "gapsutkkdh",
     "version" : "1.0.0",
     "welcomeContent" : {
 

@@ -1,0 +1,60 @@
+{
+  "installer" : {
+    "components" : [
+      {
+        "extraFiles" : [
+
+        ],
+        "files" : [
+          {
+            "destination" : "\/",
+            "source" : {
+              "absoluteFilePath" : "\/Users\/bernardahn\/Desktop\/code\/thilter\/Builds\/MacOSX\/build\/Release\/thilter.vst3"
+            },
+            "uid" : "lrlkkizaev"
+          }
+        ],
+        "identifier" : "com.squwbs.thilter",
+        "name" : "thilter",
+        "requireAdminPassword" : false,
+        "requireAfterInstall" : "none",
+        "requireAppsNotRunning" : [
+
+        ],
+        "selectedByDefault" : true,
+        "uid" : "moacfmvyto",
+        "version" : "1.0.0"
+      }
+    ],
+    "conclusionContent" : {
+
+    },
+    "gatekeeperScheme" : "none",
+    "identifier" : "com.squwbs.thilter",
+    "licenseContent" : {
+
+    },
+    "name" : "Thilter VST3 installer",
+    "options" : {
+      "allowedDestinations" : "startUpDisk,userFolder",
+      "architectures" : "arm64",
+      "installChoiceCustomization" : "always",
+      "installScriptAllowsExternalScripts" : false,
+      "minOSVersion" : "10.13.0"
+    },
+    "readmeContent" : {
+
+    },
+    "uid" : "iwqspqzktr",
+    "version" : "1.0.0",
+    "welcomeContent" : {
+
+    },
+    "windowOptions" : {
+      "backgroundImageDimmed" : true,
+      "backgroundImagePosition" : "left",
+      "backgroundImageScaling" : "proportional"
+    }
+  },
+  "version" : 1
+}

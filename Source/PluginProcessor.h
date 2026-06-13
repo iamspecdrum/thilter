@@ -953,6 +953,8 @@ public:
     ThreeBandEQ eq2;
     LP24 lpl;
     LP24 lpr;
+    juce::dsp::IIR::Filter<float> lowPassLeft;
+    juce::dsp::IIR::Filter<float> lowPassRight;
     AudioDoubler doubler;
     DefaultLimiter limiterl;
     DefaultLimiter limiterr;
@@ -972,8 +974,9 @@ public:
 private:
     void parameterChanged (const juce::String& parameterID, float newValue) override;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    
     std::atomic<float>* gainParameter = nullptr;
-    std::atomic<float>* LPParameter = nullptr;
+    //std::atomic<float>* LPParameter = nullptr;
     std::atomic<float>* volParameter = nullptr;
     std::atomic<float>* doublerParameter = nullptr;
 

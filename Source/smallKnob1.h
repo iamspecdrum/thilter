@@ -20,7 +20,7 @@ public:
                           float rotaryEndAngle, juce::Slider& slider) override
     {
         // Load the image from BinaryData
-        juce::Image filmStrip = juce::ImageCache::getFromMemory(BinaryData::knob_png, BinaryData::knob_pngSize);
+        juce::Image filmStrip = juce::ImageCache::getFromMemory(BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize);
 
         // Check if the image was loaded correctly
         if (filmStrip.isValid())

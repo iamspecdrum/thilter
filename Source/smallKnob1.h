@@ -12,7 +12,7 @@
 #include <JuceHeader.h>
 #include "BinaryData.h"
 
-class CustomRotaryKnobLookAndFeel : public juce::LookAndFeel_V4
+class SmallKnob1 : public juce::LookAndFeel_V4
 {
 public:
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
@@ -20,7 +20,7 @@ public:
                           float rotaryEndAngle, juce::Slider& slider) override
     {
         // Load the image from BinaryData
-        juce::Image filmStrip = juce::ImageCache::getFromMemory(BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize);
+        juce::Image filmStrip = juce::ImageCache::getFromMemory(BinaryData::smallknob1imagestrip_png, BinaryData::smallknob1imagestrip_pngSize);
 
         // Check if the image was loaded correctly
         if (filmStrip.isValid())

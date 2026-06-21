@@ -6,15 +6,24 @@
               companyName="squwbs">
   <MAINGROUP id="nxGT50" name="thilter">
     <GROUP id="{F6ECBD67-0E5A-B60F-49A8-BA7568AE3638}" name="resources">
-      <FILE id="yn2ard" name="knob.png" compile="0" resource="1" file="knob_frames/knob.png"/>
-      <FILE id="Oc3Ghz" name="prev_knob.png" compile="0" resource="1" file="Source/resources/prev_knob.png"/>
+      <FILE id="uJhjXd" name="smallknob2imagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
+      <FILE id="QKz7Q6" name="smallknob1imagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/smallknob1/raw_cuts/smallknob1imagestrip.png"/>
+      <FILE id="v3gOJN" name="buttonimagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/button/raw_cuts/buttonimagestrip.png"/>
+      <FILE id="JEsHOC" name="bigknobimagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts/bigknobimagestrip.png"/>
     </GROUP>
     <GROUP id="{5F4CBACC-4335-284C-CCF6-CC2176757CA0}" name="Source">
+      <FILE id="fysZaN" name="overlappingBigKnob.h" compile="0" resource="0"
+            file="Source/overlappingBigKnob.h"/>
       <FILE id="tXymTP" name="AdvancedLimiter.cpp" compile="1" resource="0"
             file="Source/AdvancedLimiter.cpp"/>
       <FILE id="RjfRE2" name="AdvancedLimiter.h" compile="0" resource="0"
             file="Source/AdvancedLimiter.h"/>
-      <FILE id="QHfupE" name="customKnob.h" compile="0" resource="0" file="Source/customKnob.h"/>
+      <FILE id="QHfupE" name="smallKnob1.h" compile="0" resource="0" file="Source/smallKnob1.h"/>
+      <FILE id="tkJvMz" name="smallKnob2.h" compile="0" resource="0" file="Source/smallKnob2.h"/>
       <FILE id="C8tsX9" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="tVc3ZP" name="PluginProcessor.h" compile="0" resource="0"

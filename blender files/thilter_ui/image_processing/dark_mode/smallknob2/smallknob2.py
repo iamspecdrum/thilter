@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageDraw
 
 # 1. Define your crop area: (left, upper, right, lower) in pixels
-crop_area = (212, 249, 303, 339)  # Adjust these values as needed
+crop_area = (212, 249, 302, 339)  # Adjust these values as needed
 
 # 2. Define your directories
 input_folder = "/Users/bernardahn/Desktop/code/thilter/blender files/thilter_ui/dark_ver_animation_frames_2.0"

@@ -10,7 +10,9 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "customKnob.h"
+#include "smallKnob1.h"
+#include "smallKnob2.h"
+#include "overlappingBigKnob.h"
 //==============================================================================
 /**
 */
@@ -49,7 +51,9 @@ private:
     //juce::Slider LPSlider;
     juce::Slider doublerSlider;
     juce::Slider volSlider;
-    CustomRotaryKnobLookAndFeel myCustomLookAndFeel;
+    OverlappingBigKnob overlappingBigKnob;
+    SmallKnob1 myCustomLookAndFeel1;
+    SmallKnob2 myCustomLookAndFeel2;
     juce::Label gainLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachment;

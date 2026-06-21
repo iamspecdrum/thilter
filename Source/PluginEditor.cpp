@@ -9,13 +9,15 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
 //==============================================================================
 Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p),
+      overlappingBigKnob (BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize, 128)
 {
     // Initialize license screen
     showLicenseScreen();
-    setSize (250, 250);
+    setSize (341, 420);
 }
 juce::File getLicenseFile() {
     DBG("getLicenseFile ran");
@@ -175,16 +177,21 @@ void Squwbs4AudioProcessorEditor::showMainUI()
 {
     // Clear any existing components
     removeAllChildren();
-    setSize (250, 250);
+    setSize (341, 420);
+    addAndMakeVisible (overlappingBigKnob);
+    //overlappingBigKnob.setImages (juce::ImageCache::getFromMemory (BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize), 128);
     // Configure and add the gain slider
+    
+    /*
     gainSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
-    //gainSlider.setLookAndFeel(&myCustomLookAndFeel);
+    gainSlider.setLookAndFeel(&myCustomLookAndFeel);
     gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     gainSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
     gainSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     gainSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80,80,80));
     gainSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
     addAndMakeVisible (gainSlider);
+    */
     //LPSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     //gainSlider.setLookAndFeel(&myCustomLookAndFeel);
     //LPSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
@@ -194,28 +201,43 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     //LPSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
     //addAndMakeVisible(LPSlider);
     doublerSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
-    //gainSlider.setLookAndFeel(&myCustomLookAndFeel);
+    doublerSlider.setLookAndFeel(&myCustomLookAndFeel1);
+    
     doublerSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     doublerSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
     doublerSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     doublerSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     doublerSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
+    
     addAndMakeVisible(doublerSlider);
+    
+    
     volSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
-    //gainSlider.setLookAndFeel(&myCustomLookAndFeel);
+    volSlider.setLookAndFeel(&myCustomLookAndFeel2);
+    
     volSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     volSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
     volSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     volSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     volSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
+    
     addAndMakeVisible(volSlider);
-
+    
     // Create the slider attachment
+    /*
     gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "GAIN_ID", gainSlider);
+    */
+   gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+        audioProcessor.parameters, "GAIN_ID", overlappingBigKnob);
+        
     volAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "VOL_ID", volSlider);
     //LPAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (audioProcessor.parameters, "LP_ID", LPSlider);
+    /*
+    widthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+    audioProcessor.parameters, "WIDTH_ID", doublerSlider);
+    */
     widthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
     audioProcessor.parameters, "WIDTH_ID", doublerSlider);
     
@@ -333,6 +355,7 @@ void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& l
 Squwbs4AudioProcessorEditor::~Squwbs4AudioProcessorEditor()
 {
     gainSlider.setLookAndFeel(nullptr);
+    overlappingBigKnob.setLookAndFeel(nullptr);
     //LPSlider.setLookAndFeel(nullptr);
     volSlider.setLookAndFeel(nullptr);
     doublerSlider.setLookAndFeel(nullptr);
@@ -402,9 +425,11 @@ void Squwbs4AudioProcessorEditor::resized()
     if (isLicensed||isValid)
     {
         // Main UI layout
-        gainSlider.setBounds (25, 12, 200, 200);
-        volSlider.setBounds(194,200,50,50);
-        doublerSlider.setBounds(6,200,50,50);
+        //gainSlider.setBounds (0, 0, 341, 420);
+        overlappingBigKnob.setBounds(0, 0, 341, 420);
+        doublerSlider.setBounds(31,239,105,105);
+        volSlider.setBounds(206,239,105,105);
+        
     }
     else
     {

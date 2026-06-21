@@ -13,6 +13,7 @@
 #include "smallKnob1.h"
 #include "smallKnob2.h"
 #include "overlappingBigKnob.h"
+#include "skinButton.h"
 //==============================================================================
 /**
 */
@@ -44,6 +45,7 @@ private:
     juce::Label errorLabel;
     bool isLicensed = false;
     bool isValid = false;
+    bool isDarkMode = true;
     int failedAttempts = 0;
     
     // Main UI components
@@ -54,6 +56,7 @@ private:
     OverlappingBigKnob overlappingBigKnob;
     SmallKnob1 myCustomLookAndFeel1;
     SmallKnob2 myCustomLookAndFeel2;
+    SkinButton skinButton;
     juce::Label gainLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachment;
@@ -63,6 +66,7 @@ private:
     void showLicenseScreen();
     void showMainUI();
     void handleLicenseValidation (const juce::String& licenseKey);
+    void updateSkinMode();
     void showError (const juce::String& message);
 
     float errorAlpha = 0.0f;

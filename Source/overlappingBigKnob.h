@@ -22,27 +22,30 @@ public:
     // 🎯 Hit-test based on the transparency of the current active frame pixel
     bool hitTest(int x, int y) override
     {
-        if (knobStrip.isNull() || frameWidth <= 0 || frameHeight <= 0)
-            return false;
-
-        int width = getWidth();
-        int height = getHeight();
-        if (width <= 0 || height <= 0)
+        if (knobStrip.isNull())
             return false;
 
         // 1. Determine which frame is currently visible
-        int currentFrame = 0;
-        if (getMaximum() > 0.0)
-            currentFrame = juce::jlimit(0, numFrames - 1,
-                static_cast<int>(std::floor(getValue() / getMaximum() * (numFrames - 1) + 0.5f)));
+        int currentFrame = juce::jlimit(0, numFrames - 1, 
+            static_cast<int>(std::ceil(getValue() / getMaximum() * (numFrames - 1))));
 
-        // 2. Map the local mouse coordinates into the image frame
-        int sourceX = juce::jlimit(0, frameWidth - 1, x * frameWidth / width);
-        int sourceY = juce::jlimit(0, frameHeight - 1, y * frameHeight / height);
-        sourceY += currentFrame * frameHeight;
+        // 2. Scale the component's mouse coordinates to the source image coordinates
+        // The component is drawn at (0, 0, getWidth(), getHeight())
+        // But the source image is (frameWidth, frameHeight)
+        float scaleX = static_cast<float>(frameWidth) / getWidth();
+        float scaleY = static_cast<float>(frameHeight) / getHeight();
+        
+        int sourceX = static_cast<int>(x * scaleX);
+        int sourceY = (currentFrame * frameHeight) + static_cast<int>(y * scaleY);
 
-        // 3. Use the image alpha to determine whether the hit is inside the visible knob shape
+        // 3. Clamp to valid image coordinates
+        sourceX = juce::jlimit(0, frameWidth - 1, sourceX);
+        sourceY = juce::jlimit(currentFrame * frameHeight, (currentFrame + 1) * frameHeight - 1, sourceY);
+
+        // 4. Extract the pixel color and check the alpha channel
         juce::Colour pixelColor = knobStrip.getPixelAt(sourceX, sourceY);
+        
+        // Return true only if the pixel is mostly opaque (alpha > 0.1)
         return pixelColor.getFloatAlpha() > 0.1f;
     }
 

@@ -6,16 +6,17 @@
               companyName="squwbs">
   <MAINGROUP id="nxGT50" name="thilter">
     <GROUP id="{F6ECBD67-0E5A-B60F-49A8-BA7568AE3638}" name="resources">
+      <FILE id="J0uMBu" name="buttonimagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/button/raw_cuts/buttonimagestrip.png"/>
+      <FILE id="IKN645" name="bigknobimagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts/bigknobimagestrip.png"/>
       <FILE id="uJhjXd" name="smallknob2imagestrip.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
       <FILE id="QKz7Q6" name="smallknob1imagestrip.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/dark_mode/smallknob1/raw_cuts/smallknob1imagestrip.png"/>
-      <FILE id="v3gOJN" name="buttonimagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/button/raw_cuts/buttonimagestrip.png"/>
-      <FILE id="JEsHOC" name="bigknobimagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts/bigknobimagestrip.png"/>
     </GROUP>
     <GROUP id="{5F4CBACC-4335-284C-CCF6-CC2176757CA0}" name="Source">
+      <FILE id="Qhb5Az" name="skinButton.h" compile="0" resource="0" file="Source/skinButton.h"/>
       <FILE id="fysZaN" name="overlappingBigKnob.h" compile="0" resource="0"
             file="Source/overlappingBigKnob.h"/>
       <FILE id="tXymTP" name="AdvancedLimiter.cpp" compile="1" resource="0"

@@ -13,11 +13,15 @@
 //==============================================================================
 Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
-      overlappingBigKnob (BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize, 128)
+    overlappingBigKnob (BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize, 128),
+    skinButton ("Button",BinaryData::buttonimagestrip_png, BinaryData::buttonimagestrip_pngSize)
 {
     // Initialize license screen
     showLicenseScreen();
+    skinButton.addListener(this);
+    skinButton.setToggleState(!isDarkMode, juce::dontSendNotification);
     setSize (341, 420);
+    
 }
 juce::File getLicenseFile() {
     DBG("getLicenseFile ran");
@@ -142,22 +146,7 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
 
     isLicensed = false;
     isValid = false;   
-    /*
-    auto file = getLicenseFile();
-    if (file.existsAsFile()) {
-        auto savedKey = file.loadFileAsString();
-    if (audioProcessor.validateLicense (savedKey)) // Implement your key verification logic
-        isLicensed = true;
-        DBG("License key from file is valid. Skipping user input validation.");
-    }
-    failedAttempts = 0;  // Reset failed attempts counter
-    
-    if (isLicensed)
-    {
-        showMainUI();
-        DBG("License validation successful. Showing main UI.");
-    }
-    */
+
     auto file = getLicenseFile();
     if(file.existsAsFile())
     {
@@ -179,42 +168,19 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     removeAllChildren();
     setSize (341, 420);
     addAndMakeVisible (overlappingBigKnob);
-    //overlappingBigKnob.setImages (juce::ImageCache::getFromMemory (BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize), 128);
-    // Configure and add the gain slider
-    
-    /*
-    gainSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
-    gainSlider.setLookAndFeel(&myCustomLookAndFeel);
-    gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    gainSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
-    gainSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
-    gainSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80,80,80));
-    gainSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
-    addAndMakeVisible (gainSlider);
-    */
-    //LPSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
-    //gainSlider.setLookAndFeel(&myCustomLookAndFeel);
-    //LPSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    //LPSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
-    //LPSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colour (80, 80, 80));
-    //LPSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colours::white);
-    //LPSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
-    //addAndMakeVisible(LPSlider);
+
     doublerSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     doublerSlider.setLookAndFeel(&myCustomLookAndFeel1);
-    
     doublerSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     doublerSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
     doublerSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     doublerSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     doublerSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
-    
     addAndMakeVisible(doublerSlider);
     
     
     volSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     volSlider.setLookAndFeel(&myCustomLookAndFeel2);
-    
     volSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     volSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
     volSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
@@ -222,24 +188,17 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     volSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
     
     addAndMakeVisible(volSlider);
-    
-    // Create the slider attachment
-    /*
-    gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
-        audioProcessor.parameters, "GAIN_ID", gainSlider);
-    */
+    addAndMakeVisible(skinButton);
+
+
    gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "GAIN_ID", overlappingBigKnob);
         
     volAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "VOL_ID", volSlider);
-    //LPAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (audioProcessor.parameters, "LP_ID", LPSlider);
-    /*
+
     widthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
-    audioProcessor.parameters, "WIDTH_ID", doublerSlider);
-    */
-    widthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
-    audioProcessor.parameters, "WIDTH_ID", doublerSlider);
+        audioProcessor.parameters, "WIDTH_ID", doublerSlider);
     
     
 }
@@ -252,55 +211,7 @@ void Squwbs4AudioProcessorEditor::showError (const juce::String& message)
     errorLabel.setColour (juce::Label::textColourId, juce::Colours::white.withAlpha (errorAlpha));
     startTimerHz (30);
 }
-/*
-void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& licenseKey)
-{
-    auto file = getLicenseFile();
-    if (file.existsAsFile()) {
-        auto savedKey = file.loadFileAsString();
-    if (audioProcessor.validateLicense (savedKey)) // Implement your key verification logic
-        isLicensed = true;
-        DBG("License key from file is valid. Skipping user input validation.");
-    }
-    
-    // Call the processor's validation function
-    if (!isLicensed) {
-        //juce::DBG("License key from file is invalid. Proceeding with user input validation.");
-         isValid = audioProcessor.validateLicense (licenseKey);
-    }
-    
-    
-    if (isLicensed||isValid)
-    {
-        //errorLabel.setVisible (false);
-        showMainUI();
-        DBG("License validation successful. Showing main UI.");
-        stopTimer();
-        saveLicenseFile(licenseKey); // Save the valid key for future sessions
-    }
-    else
-    {
-        failedAttempts++;
-        
-        if (failedAttempts >= 5)
-        {
-            // Lock the input and show reload message
-            licenseKeyInput.setReadOnly (true);
-            licenseKeyInput.setText ("");
-            sendButton.setEnabled (false);
-            errorLabel.setText ("Too many failed attempts. Please reload the plugin to try again.", juce::dontSendNotification);
-            errorLabel.setColour (juce::Label::textColourId, juce::Colour (230, 100, 100));
-            errorLabel.setVisible (true);
-            stopTimer();  // Make sure any fading timer is stopped
-        }
-        else
-        {
-            showError ("Invalid license key");
-            licenseKeyInput.setText ("");
-        }
-    }
-}
-*/
+
 
 void Squwbs4AudioProcessorEditor::handleLicenseValidation (const juce::String& licenseKey)
 {
@@ -361,6 +272,7 @@ Squwbs4AudioProcessorEditor::~Squwbs4AudioProcessorEditor()
     doublerSlider.setLookAndFeel(nullptr);
     sendButton.removeListener (this);
     licenseKeyInput.removeListener (this);
+    skinButton.removeListener (this);
 }
 
 void Squwbs4AudioProcessorEditor::buttonClicked (juce::Button* button)
@@ -377,6 +289,18 @@ void Squwbs4AudioProcessorEditor::buttonClicked (juce::Button* button)
             handleLicenseValidation (licenseKey);
         }
     }
+    else if (button == &skinButton)
+    {
+        isDarkMode = !isDarkMode;
+        DBG (isDarkMode ? "Switching to dark mode" : "Switching to light mode");
+        updateSkinMode();
+    }
+}
+
+void Squwbs4AudioProcessorEditor::updateSkinMode()
+{
+    skinButton.setToggleState(!isDarkMode, juce::dontSendNotification);
+    repaint();
 }
 
 void Squwbs4AudioProcessorEditor::textEditorReturnKeyPressed (juce::TextEditor& textEditor)
@@ -399,7 +323,7 @@ void Squwbs4AudioProcessorEditor::textEditorReturnKeyPressed (juce::TextEditor& 
 void Squwbs4AudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (juce::Colour (56, 56, 56));
+    g.fillAll (isDarkMode ? juce::Colour (56, 56, 56) : juce::Colour (240, 240, 240));
 }
 
 void Squwbs4AudioProcessorEditor::timerCallback()
@@ -429,6 +353,18 @@ void Squwbs4AudioProcessorEditor::resized()
         overlappingBigKnob.setBounds(0, 0, 341, 420);
         doublerSlider.setBounds(31,239,105,105);
         volSlider.setBounds(206,239,105,105);
+        skinButton.setBounds(150,361,40,40);
+        if(isDarkMode){
+            volSlider.setVisible(true);
+            doublerSlider.setVisible(true);
+            overlappingBigKnob.setVisible(true);
+        }
+        else{
+            volSlider.setVisible(false);
+            doublerSlider.setVisible(false);
+            overlappingBigKnob.setVisible(false);
+        }
+        
         
     }
     else

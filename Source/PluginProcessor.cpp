@@ -343,22 +343,12 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
             if (skewedMixFloat == prevGain)
             {
-                //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
-                //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                //main.setSample(0, j, wetLeft);
-                //main.setSample(1, j, wetRight);
                 main.setSample(0, j, advLimiterL.processSample(wetLeft));
-                main.setSample(1, j, advLimiterR.processSample(wetRight));
             }
             else
             {
                 prevGain += increment;
-                //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
-                //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                //main.setSample(0, j, wetLeft);
-                //main.setSample(1, j, wetRight);
                 main.setSample(0, j, advLimiterL.processSample(wetLeft));
-                main.setSample(1, j, advLimiterR.processSample(wetRight));
             }
         }
     }

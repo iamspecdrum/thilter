@@ -501,7 +501,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Squwbs4AudioProcessor::creat
     ));
 
     // Example 3: Boolean Parameter (Bypass Switch)
-    juce::NormalisableRange<float> volumeRange(0.0f,9.0f,0.1f);
+    juce::NormalisableRange<float> volumeRange(0.0f,6.0f,0.01f);
     volumeRange.setSkewForCentre(1.0f);
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID { "VOL_ID", 1 },

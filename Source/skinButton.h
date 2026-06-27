@@ -35,7 +35,8 @@ public:
         }
         else
         {
-            frameIndex = 2;
+            frameIndex = isMouseOverButton ? 1 : 0;
+            //frameIndex = 2;
             //frameIndex=1;
             i++;
             DBG(i)

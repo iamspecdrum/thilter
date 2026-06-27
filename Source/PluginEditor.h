@@ -12,6 +12,8 @@
 #include "PluginProcessor.h"
 #include "smallKnob1.h"
 #include "smallKnob2.h"
+#include "smallKnob1Light.h"
+#include "smallKnob2Light.h"
 #include "overlappingBigKnob.h"
 #include "skinButton.h"
 //==============================================================================
@@ -50,19 +52,32 @@ private:
     
     // Main UI components
     juce::Slider gainSlider;
+    juce::Slider gainSliderLight;
     //juce::Slider LPSlider;
     juce::Slider doublerSlider;
+    juce::Slider doublerSliderLight;
     juce::Slider volSlider;
+    juce::Slider volSliderLight;
     OverlappingBigKnob overlappingBigKnob;
+    OverlappingBigKnob overlappingBigKnobLight;
     SmallKnob1 myCustomLookAndFeel1;
     SmallKnob2 myCustomLookAndFeel2;
+    SmallKnob1Light myCustomLookAndFeel1Light;
+    SmallKnob2Light myCustomLookAndFeel2Light;
     SkinButton skinButton;
+    SkinButton skinButtonLight;
     juce::Label gainLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachment;
     //std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> LPAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> widthAttachment;
-    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachment;
+    // Attachments for light-mode controls (keep separate to avoid overwriting)
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainAttachmentLight;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachmentLight;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> widthAttachmentLight;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachmentLight;
+
     void showLicenseScreen();
     void showMainUI();
     void handleLicenseValidation (const juce::String& licenseKey);

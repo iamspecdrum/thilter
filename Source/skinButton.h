@@ -30,13 +30,13 @@ public:
 
         if (!isOn)
         {
-            //frameIndex = isMouseOverButton ? 1 : 0;
-            frameIndex = 1;
+            frameIndex = isMouseOverButton ? 1 : 0;
+            //frameIndex = 1;
         }
         else
         {
-            //frameIndex = 2;
-            frameIndex=1;
+            frameIndex = 2;
+            //frameIndex=1;
             i++;
             DBG(i)
         }

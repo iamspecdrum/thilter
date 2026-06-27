@@ -14,12 +14,14 @@
 Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
     overlappingBigKnob (BinaryData::bigknobimagestrip_png, BinaryData::bigknobimagestrip_pngSize, 128),
-    skinButton ("Button",BinaryData::buttonimagestrip_png, BinaryData::buttonimagestrip_pngSize)
+    overlappingBigKnobLight (BinaryData::bigknobimagestrip_light_png, BinaryData::bigknobimagestrip_light_pngSize, 128),
+    skinButton ("Button",BinaryData::buttonimagestrip_png, BinaryData::buttonimagestrip_pngSize),
+    skinButtonLight ("Button",BinaryData::buttonimagestrip_light_png, BinaryData::buttonimagestrip_light_pngSize)
 {
     // Initialize license screen
     showLicenseScreen();
-    skinButton.addListener(this);
-    skinButton.setToggleState(!isDarkMode, juce::dontSendNotification);
+    //skinButton.addListener(this);
+    //skinButton.setToggleState(!isDarkMode, juce::dontSendNotification);
     setSize (341, 420);
     
 }
@@ -168,6 +170,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     removeAllChildren();
     setSize (341, 420);
     addAndMakeVisible (overlappingBigKnob);
+    addAndMakeVisible (overlappingBigKnobLight);
 
     doublerSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     doublerSlider.setLookAndFeel(&myCustomLookAndFeel1);
@@ -178,6 +181,15 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     doublerSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
     addAndMakeVisible(doublerSlider);
     
+    doublerSliderLight.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
+    doublerSliderLight.setLookAndFeel(&myCustomLookAndFeel1Light);
+    doublerSliderLight.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    doublerSliderLight.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
+    doublerSliderLight.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
+    doublerSliderLight.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
+    doublerSliderLight.setColour (juce::Slider::thumbColourId, juce::Colours::white);
+    addAndMakeVisible(doublerSliderLight);
+    
     
     volSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     volSlider.setLookAndFeel(&myCustomLookAndFeel2);
@@ -186,21 +198,42 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     volSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     volSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     volSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
-    
     addAndMakeVisible(volSlider);
+
+    volSliderLight.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
+    volSliderLight.setLookAndFeel(&myCustomLookAndFeel2Light);
+    volSliderLight.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    volSliderLight.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
+    volSliderLight.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
+    volSliderLight.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
+    volSliderLight.setColour (juce::Slider::thumbColourId, juce::Colours::white);
+    addAndMakeVisible(volSliderLight);
+
+    skinButton.addListener (this);
+    skinButtonLight.addListener (this);
     addAndMakeVisible(skinButton);
+    addAndMakeVisible(skinButtonLight);
 
 
-   gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+    gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "GAIN_ID", overlappingBigKnob);
-        
+    gainAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+        audioProcessor.parameters, "GAIN_ID", overlappingBigKnobLight);
     volAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "VOL_ID", volSlider);
+    volAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+        audioProcessor.parameters, "VOL_ID", volSliderLight);
 
     widthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "WIDTH_ID", doublerSlider);
-    
-    
+    widthAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
+        audioProcessor.parameters, "WIDTH_ID", doublerSliderLight);
+    buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
+        audioProcessor.parameters, "SKIN_ID", skinButton);
+    buttonAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
+        audioProcessor.parameters, "SKIN_ID", skinButtonLight);
+
+
 }
 
 void Squwbs4AudioProcessorEditor::showError (const juce::String& message)
@@ -267,12 +300,15 @@ Squwbs4AudioProcessorEditor::~Squwbs4AudioProcessorEditor()
 {
     gainSlider.setLookAndFeel(nullptr);
     overlappingBigKnob.setLookAndFeel(nullptr);
+    overlappingBigKnobLight.setLookAndFeel(nullptr);
     //LPSlider.setLookAndFeel(nullptr);
     volSlider.setLookAndFeel(nullptr);
     doublerSlider.setLookAndFeel(nullptr);
     sendButton.removeListener (this);
     licenseKeyInput.removeListener (this);
     skinButton.removeListener (this);
+    skinButtonLight.removeListener (this);
+    stopTimer();
 }
 
 void Squwbs4AudioProcessorEditor::buttonClicked (juce::Button* button)
@@ -289,7 +325,7 @@ void Squwbs4AudioProcessorEditor::buttonClicked (juce::Button* button)
             handleLicenseValidation (licenseKey);
         }
     }
-    else if (button == &skinButton)
+    else if (button == &skinButton || button == &skinButtonLight)
     {
         isDarkMode = !isDarkMode;
         DBG (isDarkMode ? "Switching to dark mode" : "Switching to light mode");
@@ -299,7 +335,8 @@ void Squwbs4AudioProcessorEditor::buttonClicked (juce::Button* button)
 
 void Squwbs4AudioProcessorEditor::updateSkinMode()
 {
-    skinButton.setToggleState(!isDarkMode, juce::dontSendNotification);
+    // Show/hide components according to the current skin. Parameter attachments keep both
+    // dark and light controls synchronized with the processor values, so no referTo needed.
     repaint();
 }
 
@@ -323,7 +360,43 @@ void Squwbs4AudioProcessorEditor::textEditorReturnKeyPressed (juce::TextEditor& 
 void Squwbs4AudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (isDarkMode ? juce::Colour (56, 56, 56) : juce::Colour (240, 240, 240));
+    //g.fillAll (isDarkMode ? juce::Colour (56, 56, 56) : juce::Colour (240, 240, 240));
+    if(!isDarkMode){
+        overlappingBigKnob.setBounds(0, 0, 341, 420);
+        overlappingBigKnob.setVisible(true);
+        overlappingBigKnobLight.setVisible(false);
+        doublerSlider.setBounds(31,239,105,105);
+        doublerSlider.setVisible(true);
+        doublerSliderLight.setVisible(false);
+        //doublerSlider.setLookAndFeel(&myCustomLookAndFeel1);
+        volSlider.setBounds(206,239,105,105);
+        volSlider.setVisible(true);
+        volSliderLight.setVisible(false);
+        //volSlider.setLookAndFeel(&myCustomLookAndFeel2);
+        skinButton.setBounds(150,361,40,40);
+        skinButton.setVisible(true);
+        skinButtonLight.setVisible(false);
+        
+        
+        
+    }
+    else{
+        overlappingBigKnobLight.setBounds(0, 0, 341, 420);
+        overlappingBigKnobLight.setVisible(true);
+        overlappingBigKnob.setVisible(false);
+        doublerSliderLight.setBounds(31,239,105,105);
+        doublerSliderLight.setVisible(true);
+        doublerSlider.setVisible(false);
+        //doublerSlider.setLookAndFeel(&myCustomLookAndFeel1Light);
+        volSliderLight.setBounds(206,239,105,105);
+        volSliderLight.setVisible(true);
+        volSlider.setVisible(false);
+        //volSlider.setLookAndFeel(&myCustomLookAndFeel2Light);
+        skinButtonLight.setBounds(150,361,40,40);
+        skinButtonLight.setVisible(true);
+        skinButton.setVisible(false);
+     // Skip layout adjustments for light mode
+    }
 }
 
 void Squwbs4AudioProcessorEditor::timerCallback()
@@ -350,20 +423,9 @@ void Squwbs4AudioProcessorEditor::resized()
     {
         // Main UI layout
         //gainSlider.setBounds (0, 0, 341, 420);
-        overlappingBigKnob.setBounds(0, 0, 341, 420);
-        doublerSlider.setBounds(31,239,105,105);
-        volSlider.setBounds(206,239,105,105);
+        
         skinButton.setBounds(150,361,40,40);
-        if(isDarkMode){
-            volSlider.setVisible(true);
-            doublerSlider.setVisible(true);
-            overlappingBigKnob.setVisible(true);
-        }
-        else{
-            volSlider.setVisible(false);
-            doublerSlider.setVisible(false);
-            overlappingBigKnob.setVisible(false);
-        }
+        
         
         
     }

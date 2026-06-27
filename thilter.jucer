@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="dgRq24" name="thilter dark skin" projectType="audioplug"
-              useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1"
-              pluginManufacturer="squwbs" aaxIdentifier="com.squwbs.squwbs4"
-              pluginAAXCategory="8192" companyWebsite="www.iamspecdrum.com"
+<JUCERPROJECT id="dgRq24" name="thilter" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginManufacturer="squwbs"
+              aaxIdentifier="com.squwbs.squwbs4" pluginAAXCategory="8192" companyWebsite="www.iamspecdrum.com"
               companyName="squwbs">
-  <MAINGROUP id="nxGT50" name="thilter dark skin">
+  <MAINGROUP id="nxGT50" name="thilter">
     <GROUP id="{F6ECBD67-0E5A-B60F-49A8-BA7568AE3638}" name="resources">
+      <FILE id="yOvAHQ" name="buttonimagestrip_light.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/light_mode/button/raw_cuts/buttonimagestrip_light.png"/>
+      <FILE id="pAfAQk" name="smallknob2imagestrip_light.png" compile="0"
+            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob2/smallknob2imagestrip_light.png"/>
+      <FILE id="n4gFbn" name="smallknob1imagestrip_light.png" compile="0"
+            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts/smallknob1imagestrip_light.png"/>
+      <FILE id="Pl1dTp" name="bigknobimagestrip_light.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/light_mode/bigknob/raw_cuts/bigknobimagestrip_light.png"/>
       <FILE id="TNa9Hi" name="smallknob2imagestrip.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
       <FILE id="pd88sv" name="bigknobimagestrip.png" compile="0" resource="1"
@@ -30,6 +37,10 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="tVc3ZP" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="ocEnn0" name="smallKnob1Light.h" compile="0" resource="0"
+            file="Source/smallKnob1Light.h"/>
+      <FILE id="ine4Zq" name="smallKnob2Light.h" compile="0" resource="0"
+            file="Source/smallKnob2Light.h"/>
       <FILE id="WL8Udn" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="c86q3G" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

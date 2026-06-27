@@ -36,17 +36,25 @@ public:
         float scaleY = static_cast<float>(frameHeight) / getHeight();
         
         int sourceX = static_cast<int>(x * scaleX);
-        int sourceY = (currentFrame * frameHeight) + static_cast<int>(y * scaleY);
+        int sourceY = static_cast<int>(y * scaleY);
 
-        // 3. Clamp to valid image coordinates
+        // 3. Clamp to valid image coordinates within a single frame
         sourceX = juce::jlimit(0, frameWidth - 1, sourceX);
-        sourceY = juce::jlimit(currentFrame * frameHeight, (currentFrame + 1) * frameHeight - 1, sourceY);
+        sourceY = juce::jlimit(0, frameHeight - 1, sourceY);
 
-        // 4. Extract the pixel color and check the alpha channel
-        juce::Colour pixelColor = knobStrip.getPixelAt(sourceX, sourceY);
-        
-        // Return true only if the pixel is mostly opaque (alpha > 0.1)
-        return pixelColor.getFloatAlpha() > 0.1f;
+        // Convert to coordinates within the full strip when sampling the pixel
+        int pixelX = sourceX;
+        int pixelY = currentFrame * frameHeight + sourceY;
+
+        // 4. (optional) Extract the pixel color if you want transparency-based hit-testing
+        // juce::Colour pixelColor = knobStrip.getPixelAt(pixelX, pixelY);
+
+        // Test against the desired rectangle in frame-local coordinates
+        bool xIn = sourceX > 74 && sourceX < 264;
+        bool yIn = sourceY > 32 && sourceY < 222;
+        bool allIn = xIn && yIn;
+
+        return allIn;
     }
 
     void paint(juce::Graphics& g) override

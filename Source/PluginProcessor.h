@@ -984,6 +984,7 @@ private:
     //std::atomic<float>* LPParameter = nullptr;
     std::atomic<float>* volParameter = nullptr;
     std::atomic<float>* widthParameter = nullptr;
+    std::atomic<float>* buttonParameter = nullptr;
 
     juce::UndoManager undoManager;
     //==============================================================================

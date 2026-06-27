@@ -23,6 +23,10 @@ parameters (*this, &undoManager, "Parameters", createParameterLayout())
     //LPParameter = parameters.getRawParameterValue("LP_ID");
     parameters.addParameterListener("WIDTH_ID",this);
     widthParameter = parameters.getRawParameterValue("WIDTH_ID");
+    parameters.addParameterListener("SKIN_ID",this);
+    
+
+    
 }
 
 Squwbs4AudioProcessor::~Squwbs4AudioProcessor()

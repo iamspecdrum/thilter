@@ -187,8 +187,8 @@ public:
     AudioDoubler()
     : delayMs(4.0f),
       feedback(0.25f),
-      wetMix(0.0f),
-      dryMix(1.0f),
+      wetMix(0.5f),
+      dryMix(0.5f),
       sampleRate(48000.0f),
       delaySamples(192),
       delaySamplesAlt(193),

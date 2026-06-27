@@ -306,13 +306,13 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     const int numSamples = buffer.getNumSamples();
     const int numChannels = buffer.getNumChannels();
-
+    
     for (int sample = 0; sample < numSamples; ++sample)
     {
         const float mixValue = gainParameter != nullptr ? gainParameter->load() : 0.5f;
         const float volValue = volParameter != nullptr ? volParameter->load() : 1.0f;
         const float widthValue = widthParameter != nullptr ? widthParameter->load() : 0.5f;
-
+        doubler.setMix(widthValue);
         float currentMix = juce::jlimit (0.0f, 1.0f, mixValue);
         if (currentMix <= 0.5f)
             skewedMixFloat = currentMix * 1.5f;
@@ -323,14 +323,16 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         prevGain = skewedMixFloat;
 
         const float left = numChannels > 0 ? buffer.getSample (0, sample) : 0.0f;
-        const float right = numChannels > 1 ? buffer.getSample (1, sample) : left;
-        const float doubledRight = doubler.process (right);
+        const float right = numChannels > 1 ? doubler.process(buffer.getSample (1, sample)) : doubler.process(left);
+        
 
-        const float widthAmount = 0.25f + (widthValue * 0.25f);
-        const float wetLeft = (left * (1.0f - skewedMixFloat)) + (((left + doubledRight * widthAmount) * 0.5f) * skewedMixFloat);
-        const float wetRight = (right * (1.0f - skewedMixFloat)) + (((right + doubledRight * widthAmount) * 0.5f) * skewedMixFloat);
-        const float processedLeft = advLimiterL.processSample (juce::jlimit (-1.0f, 1.0f, wetLeft * volValue));
-        const float processedRight = advLimiterR.processSample (juce::jlimit (-1.0f, 1.0f, wetRight * volValue));
+        //const float widthAmount = widthValue;
+        
+        const float wetLeft = ((left) * skewedMixFloat);
+        const float wetRight =  ((right) * skewedMixFloat);
+        const float* wet=eq1.match(wetLeft,wetRight);
+        const float processedLeft = advLimiterL.processSample (juce::jlimit (-1.0f, 1.0f,((left * (1.0f - skewedMixFloat)) + wet[0] * 48.0f) * volValue));
+        const float processedRight = advLimiterR.processSample (juce::jlimit (-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + wet[1] * 48.0f) * volValue));
 
         buffer.setSample (0, sample, processedLeft);
         if (numChannels > 1)
@@ -430,7 +432,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Squwbs4AudioProcessor::creat
     ));
 
     // Example 3: Boolean Parameter (Bypass Switch)
-    juce::NormalisableRange<float> volumeRange(0.0f,6.0f,0.01f);
+    juce::NormalisableRange<float> volumeRange(0.0f,9.0f,0.01f);
     volumeRange.setSkewForCentre(1.0f);
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID { "VOL_ID", 1 },

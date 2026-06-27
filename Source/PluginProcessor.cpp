@@ -302,113 +302,42 @@ bool Squwbs4AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 
 void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(midiMessages);
-    /*
-    const auto cutoffHz = juce::jlimit (20.0f, 20000.0f,LPParameter != nullptr ? LPParameter->load() : 20000.0f);
-    const auto filterCoefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass (getSampleRate(), cutoffHz, 0.7071f);
+    juce::ignoreUnused (midiMessages);
 
-    if (filterCoefficients != nullptr)
+    const int numSamples = buffer.getNumSamples();
+    const int numChannels = buffer.getNumChannels();
+
+    for (int sample = 0; sample < numSamples; ++sample)
     {
-        lowPassLeft.coefficients = filterCoefficients;
-        lowPassRight.coefficients = filterCoefficients;
+        const float mixValue = gainParameter != nullptr ? gainParameter->load() : 0.5f;
+        const float volValue = volParameter != nullptr ? volParameter->load() : 1.0f;
+        const float widthValue = widthParameter != nullptr ? widthParameter->load() : 0.5f;
+
+        float currentMix = juce::jlimit (0.0f, 1.0f, mixValue);
+        if (currentMix <= 0.5f)
+            skewedMixFloat = currentMix * 1.5f;
+        else
+            skewedMixFloat = 0.75f + (currentMix - 0.5f) * 0.5f;
+
+        skewedMixFloat = juce::jlimit (0.0f, 1.0f, skewedMixFloat);
+        prevGain = skewedMixFloat;
+
+        const float left = numChannels > 0 ? buffer.getSample (0, sample) : 0.0f;
+        const float right = numChannels > 1 ? buffer.getSample (1, sample) : left;
+        const float doubledRight = doubler.process (right);
+
+        const float widthAmount = 0.25f + (widthValue * 0.25f);
+        const float wetLeft = (left * (1.0f - skewedMixFloat)) + (((left + doubledRight * widthAmount) * 0.5f) * skewedMixFloat);
+        const float wetRight = (right * (1.0f - skewedMixFloat)) + (((right + doubledRight * widthAmount) * 0.5f) * skewedMixFloat);
+        const float processedLeft = advLimiterL.processSample (juce::jlimit (-1.0f, 1.0f, wetLeft * volValue));
+        const float processedRight = advLimiterR.processSample (juce::jlimit (-1.0f, 1.0f, wetRight * volValue));
+
+        buffer.setSample (0, sample, processedLeft);
+        if (numChannels > 1)
+            buffer.setSample (1, sample, processedRight);
+        else
+            buffer.setSample (0, sample, (processedLeft + processedRight) * 0.5f);
     }
-    */
-
-    //const float currentGain = gainParameter->load();
-    //if (currentGain != previousGain){
-    //    buffer.applyGainRamp(0,0.05,previousGain,currentGain);
-    //}
-    //else{
-    //    buffer.applyGain(currentGain);
-    //}
-    
-    juce::AudioSampleBuffer main = getBusBuffer(buffer,true,0);
-    if (main.getNumChannels() == 1)
-    {
-        
-        for (int j = 0; j<main.getNumSamples(); ++j)
-        {
-            
-            mixFloat = gainParameter->load();
-            //std::cout<<mixFloat<<std::endl;
-            volFloat = volParameter->load();
-            //currentCutoff = LPParameter->load();
-            lpl.set(currentCutoff);
-            lpr.set(currentCutoff);
-            doublerWet = widthParameter->load();
-            doubler.setMix(doublerWet);
-            if (mixFloat<=0.5){
-                skewedMixFloat = mixFloat*3/2;
-            }
-            else{
-                skewedMixFloat = 0.75+(mixFloat-0.5)/2.0;
-            }
-            float increment = (skewedMixFloat-prevGain)/float(main.getNumSamples());
-            float left = main.getSample(0, j);
-            float right = main.getSample(0, j);
-            float doubledRight = doubler.process(right);
-            const float wetLeft = volFloat * (eq1.match(left, right)[0] * 64.0f * skewedMixFloat + left * (1.0f - skewedMixFloat));
-            const float wetRight = volFloat * (eq2.match(left, right)[1] * 64.0f * skewedMixFloat + doubledRight * (1.0f - skewedMixFloat));
-
-            if (skewedMixFloat == prevGain)
-            {
-                main.setSample(0, j, advLimiterL.processSample(wetLeft));
-            }
-            else
-            {
-                prevGain += increment;
-                main.setSample(0, j, advLimiterL.processSample(wetLeft));
-            }
-        }
-    }
-        
-        
-    
-    else if (main.getNumChannels() == 2)
-    {
-
-        for (int j = 0; j<main.getNumSamples(); ++j)
-        {
-            
-            mixFloat = gainParameter->load();
-            //std::cout<<mixFloat<<std::endl;
-            volFloat = volParameter->load();
-            //currentCutoff = LPParameter->load();
-            lpl.set(currentCutoff);
-            lpr.set(currentCutoff);
-            doublerWet = widthParameter->load();
-            doubler.setMix(doublerWet);
-            if (mixFloat<=0.5){
-                skewedMixFloat = mixFloat*3/2;
-            }
-            else{
-                skewedMixFloat = 0.75+(mixFloat-0.5)/2.0;
-            }
-            float increment = (skewedMixFloat-prevGain)/float(main.getNumSamples());
-            float left = main.getSample(0, j);
-            float right = main.getSample(1, j);
-            float doubledRight = doubler.process(right);
-            const float wetLeft = volFloat * (eq1.match(left, right)[0] * 64.0f * skewedMixFloat + left * (1.0f - skewedMixFloat));
-            const float wetRight = volFloat * (eq2.match(left, right)[1] * 64.0f * skewedMixFloat + doubledRight * (1.0f - skewedMixFloat));
-
-            if (skewedMixFloat == prevGain)
-            {
-                //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
-                //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                main.setSample(0, j, advLimiterL.processSample(wetLeft));
-                main.setSample(1, j, advLimiterR.processSample(wetRight));
-            }
-            else
-            {
-                prevGain += increment;
-                //main.setSample(0, j, lowPassLeft.processSample (wetLeft));
-                //main.setSample(1, j, lowPassRight.processSample (wetRight));
-                main.setSample(0, j, advLimiterL.processSample(wetLeft));
-                main.setSample(1, j, advLimiterR.processSample(wetRight));
-            }
-        }
-    }
-    
 }
 
 //==============================================================================

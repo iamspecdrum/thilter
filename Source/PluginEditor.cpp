@@ -18,6 +18,11 @@ Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor&
     skinButton ("Button",BinaryData::buttonimagestrip_png, BinaryData::buttonimagestrip_pngSize),
     skinButtonLight ("Button",BinaryData::buttonimagestrip_light_png, BinaryData::buttonimagestrip_light_pngSize)
 {
+    audioProcessor.parameters.addParameterListener("SKIN_ID", this);
+
+    if (auto* skinParameter = audioProcessor.parameters.getRawParameterValue("SKIN_ID"))
+        isDarkMode = skinParameter->load() > 0.5f;
+
     // Initialize license screen
     showLicenseScreen();
     //skinButton.addListener(this);
@@ -228,11 +233,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
         audioProcessor.parameters, "WIDTH_ID", doublerSlider);
     widthAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "WIDTH_ID", doublerSliderLight);
-    buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
-        audioProcessor.parameters, "SKIN_ID", skinButton);
-    buttonAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
-        audioProcessor.parameters, "SKIN_ID", skinButtonLight);
-
+    updateSkinMode();
 
 }
 
@@ -308,6 +309,7 @@ Squwbs4AudioProcessorEditor::~Squwbs4AudioProcessorEditor()
     licenseKeyInput.removeListener (this);
     skinButton.removeListener (this);
     skinButtonLight.removeListener (this);
+    audioProcessor.parameters.removeParameterListener("SKIN_ID", this);
     stopTimer();
 }
 
@@ -328,13 +330,34 @@ void Squwbs4AudioProcessorEditor::buttonClicked (juce::Button* button)
     else if (button == &skinButton || button == &skinButtonLight)
     {
         isDarkMode = !isDarkMode;
-        DBG (isDarkMode ? "Switching to dark mode" : "Switching to light mode");
+
+        if (auto* parameter = audioProcessor.parameters.getParameter("SKIN_ID"))
+            parameter->setValueNotifyingHost(isDarkMode ? 1.0f : 0.0f);
+
         updateSkinMode();
+    }
+}
+
+void Squwbs4AudioProcessorEditor::parameterChanged (const juce::String& parameterID, float newValue)
+{
+    if (parameterID == "SKIN_ID")
+    {
+        const bool newDarkMode = newValue > 0.5f;
+        if (isDarkMode != newDarkMode)
+        {
+            isDarkMode = newDarkMode;
+            updateSkinMode();
+        }
     }
 }
 
 void Squwbs4AudioProcessorEditor::updateSkinMode()
 {
+    if (skinButton.isVisible())
+        skinButton.setToggleState(isDarkMode, juce::dontSendNotification);
+    if (skinButtonLight.isVisible())
+        skinButtonLight.setToggleState(!isDarkMode, juce::dontSendNotification);
+
     // Show/hide components according to the current skin. Parameter attachments keep both
     // dark and light controls synchronized with the processor values, so no referTo needed.
     repaint();

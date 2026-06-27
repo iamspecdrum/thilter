@@ -23,7 +23,8 @@ class Squwbs4AudioProcessorEditor  : public juce::AudioProcessorEditor,
                                     public juce::LookAndFeel_V4,
                                     public juce::Button::Listener,
                                     public juce::TextEditor::Listener,
-                                    public juce::Timer
+                                    public juce::Timer,
+                                    private juce::AudioProcessorValueTreeState::Listener
 {
 public:
     Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor&);
@@ -35,6 +36,7 @@ public:
     void buttonClicked (juce::Button* button) override;
     void timerCallback() override;
     void textEditorReturnKeyPressed (juce::TextEditor& textEditor) override;
+    void parameterChanged (const juce::String& parameterID, float newValue) override;
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

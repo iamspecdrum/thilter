@@ -24,9 +24,8 @@ parameters (*this, &undoManager, "Parameters", createParameterLayout())
     parameters.addParameterListener("WIDTH_ID",this);
     widthParameter = parameters.getRawParameterValue("WIDTH_ID");
     parameters.addParameterListener("SKIN_ID",this);
-    
+    buttonParameter = parameters.getRawParameterValue("SKIN_ID");
 
-    
 }
 
 Squwbs4AudioProcessor::~Squwbs4AudioProcessor()
@@ -35,6 +34,7 @@ Squwbs4AudioProcessor::~Squwbs4AudioProcessor()
     parameters.removeParameterListener("VOL_ID",this);
     //parameters.removeParameterListener("LP_ID",this);
     parameters.removeParameterListener("WIDTH_ID",this);
+    parameters.removeParameterListener("SKIN_ID",this);
 }
 void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
@@ -53,6 +53,11 @@ void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, fl
     }
     */
     if(parameterID == "WIDTH_ID")
+    {
+        juce::ignoreUnused(newValue);
+    }
+
+    if(parameterID == "SKIN_ID")
     {
         juce::ignoreUnused(newValue);
     }
@@ -420,15 +425,28 @@ juce::AudioProcessorEditor* Squwbs4AudioProcessor::createEditor()
 //==============================================================================
 void Squwbs4AudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    auto state = parameters.copyState();
+    auto xml = state.createXml();
+
+    if (xml != nullptr)
+    {
+        copyXmlToBinary(*xml, destData);
+    }
 }
 
 void Squwbs4AudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    auto xml = getXmlFromBinary(data, sizeInBytes);
+
+    if (xml != nullptr)
+    {
+        auto state = juce::ValueTree::fromXml(*xml);
+
+        if (state.isValid())
+        {
+            parameters.replaceState(state);
+        }
+    }
 }
 
 //==============================================================================
@@ -476,6 +494,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Squwbs4AudioProcessor::creat
         20000.0f
     ));
     */
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        juce::ParameterID { "SKIN_ID", 1 },
+        "SKIN",
+        true
+    ));
+
     // Example 3: Boolean Parameter (Bypass Switch)
     juce::NormalisableRange<float> volumeRange(0.0f,9.0f,0.1f);
     volumeRange.setSkewForCentre(1.0f);

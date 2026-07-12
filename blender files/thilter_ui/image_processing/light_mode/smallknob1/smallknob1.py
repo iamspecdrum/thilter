@@ -6,7 +6,7 @@ crop_area = (38, 249, 128, 339)  # Adjust these values as needed
 
 # 2. Define your directories
 input_folder = "/Users/bernardahn/Desktop/code/thilter/blender files/thilter_ui/animation_frames"
-output_folder = "/Users/bernardahn/Desktop/code/thilter copy/blender files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts"
+output_folder = "/Users/bernardahn/Desktop/code/thilter/blender files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts"
 
 # Ensure the output directory exists
 os.makedirs(output_folder, exist_ok=True)

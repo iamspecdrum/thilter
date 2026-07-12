@@ -1,0 +1,44 @@
+from PIL import Image
+import os
+import sys
+def process_image_sequence(directory_path):
+    image_files = []
+    for filename in os.listdir(directory_path):
+        # Filter for common image file extensions (you can extend this list)
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff')):
+            image_files.append(filename)
+
+    # Sort the files to ensure correct sequence order (e.g., frame001.png, frame002.png)
+    image_files.sort()
+    for image_filename in image_files:
+        full_path = os.path.join(directory_path, image_filename)
+        print(f"Processing image: {full_path}")
+    return image_files
+
+directory_path = os.path.dirname(os.path.abspath(__file__))
+image_paths = process_image_sequence(directory_path)
+print(image_paths)
+# If no images were found, fail early with a helpful message
+if not image_paths:
+    print(f"No image files found in {directory_path}. Place your cropped_####.png files there or adjust the script path.")
+    sys.exit(1)
+images = [Image.open(os.path.join(directory_path, path)) for path in image_paths]
+max_width = max(img.width for img in images)
+resized_images = []
+for img in images:
+    if img.width != max_width:
+        # Maintain aspect ratio while resizing to max_width
+        new_height = int(img.height * (max_width / img.width))
+        resized_images.append(img.resize((max_width, new_height)))
+    else:
+        resized_images.append(img)
+
+total_height = sum(img.height for img in resized_images)
+# Use the mode of the first image (e.g., 'RGB', 'RGBA')
+strip_image = Image.new(resized_images[0].mode, (max_width, total_height))
+y_offset = 0
+for img in resized_images:
+    strip_image.paste(img, (0, y_offset))
+    y_offset += img.height
+
+strip_image.save(os.path.join(directory_path, "smallknob1imagestrip_light.png"))

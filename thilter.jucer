@@ -6,20 +6,20 @@
               companyName="squwbs">
   <MAINGROUP id="nxGT50" name="thilter">
     <GROUP id="{F6ECBD67-0E5A-B60F-49A8-BA7568AE3638}" name="resources">
+      <FILE id="epY0W7" name="bigknobimagestrip_light.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/light_mode/bigknob/raw_cuts/bigknobimagestrip_light.png"/>
+      <FILE id="rHHOfb" name="smallknob1imagestrip_light.png" compile="0"
+            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts/smallknob1imagestrip_light.png"/>
+      <FILE id="rhl5vS" name="smallknob2imagestrip_light.png" compile="0"
+            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob2/raw_cuts/smallknob2imagestrip_light.png"/>
       <FILE id="yOvAHQ" name="buttonimagestrip_light.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/light_mode/button/raw_cuts/buttonimagestrip_light.png"/>
-      <FILE id="pAfAQk" name="smallknob2imagestrip_light.png" compile="0"
-            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob2/smallknob2imagestrip_light.png"/>
-      <FILE id="n4gFbn" name="smallknob1imagestrip_light.png" compile="0"
-            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts/smallknob1imagestrip_light.png"/>
-      <FILE id="Pl1dTp" name="bigknobimagestrip_light.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/light_mode/bigknob/raw_cuts/bigknobimagestrip_light.png"/>
-      <FILE id="TNa9Hi" name="smallknob2imagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
-      <FILE id="pd88sv" name="bigknobimagestrip.png" compile="0" resource="1"
+      <FILE id="sp3dsO" name="bigknobimagestrip.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts/bigknobimagestrip.png"/>
-      <FILE id="VlgBhl" name="smallknob1imagestrip.png" compile="0" resource="1"
+      <FILE id="loWQKO" name="smallknob1imagestrip.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/dark_mode/smallknob1/raw_cuts/smallknob1imagestrip.png"/>
+      <FILE id="mYSSqK" name="smallknob2imagestrip.png" compile="0" resource="1"
+            file="blender files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
       <FILE id="J0uMBu" name="buttonimagestrip.png" compile="0" resource="1"
             file="blender files/thilter_ui/image_processing/dark_mode/button/raw_cuts/buttonimagestrip.png"/>
     </GROUP>

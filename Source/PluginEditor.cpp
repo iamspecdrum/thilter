@@ -115,7 +115,7 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
     // Setup license label
     licenseLabel.setText ("Enter License Key", juce::dontSendNotification);
     licenseLabel.setColour (juce::Label::textColourId, juce::Colours::white);
-    licenseLabel.setColour (juce::Label::backgroundColourId, juce::Colour (56, 56, 56));
+    licenseLabel.setColour (juce::Label::backgroundColourId, juce::Colour (29, 29, 29));
     licenseLabel.setOpaque (true);
     addAndMakeVisible (licenseLabel);
     
@@ -127,7 +127,7 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
     licenseKeyInput.setCaretVisible (true);
     licenseKeyInput.setPopupMenuEnabled (true);
     licenseKeyInput.setText ("");
-    licenseKeyInput.setColour (juce::TextEditor::backgroundColourId, juce::Colour (80, 80, 80));
+    licenseKeyInput.setColour (juce::TextEditor::backgroundColourId, juce::Colour (29, 29, 29));
     licenseKeyInput.setColour (juce::TextEditor::textColourId, juce::Colours::white);
     licenseKeyInput.setColour (juce::TextEditor::highlightColourId, juce::Colour (150, 150, 255));
     licenseKeyInput.setFont (juce::Font (16.0f));
@@ -135,8 +135,9 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
     addAndMakeVisible (licenseKeyInput);
 
     errorLabel.setText ("", juce::dontSendNotification);
-    errorLabel.setColour (juce::Label::textColourId, juce::Colour (230, 100, 100));
-    errorLabel.setColour (juce::Label::backgroundColourId, juce::Colour (56, 56, 56));
+    errorLabel.setColour (juce::Label::textColourId, juce::Colours::white);
+    errorLabel.setColour (juce::Label::textWhenEditingColourId, juce::Colour (230, 100, 100));
+    errorLabel.setColour (juce::Label::backgroundColourId, juce::Colour (29, 29, 29));
     errorLabel.setOpaque (true);
     errorLabel.setFont (juce::Font (15.0f, juce::Font::bold));
     errorLabel.setJustificationType (juce::Justification::centred);
@@ -145,8 +146,8 @@ void Squwbs4AudioProcessorEditor::showLicenseScreen()
     
     // Setup send button
     sendButton.addListener (this);
-    sendButton.setColour (juce::TextButton::buttonColourId, juce::Colour (70, 70, 70));
-    sendButton.setColour (juce::TextButton::buttonOnColourId, juce::Colour (90, 90, 90));
+    sendButton.setColour (juce::TextButton::buttonColourId, juce::Colour (29, 29, 29));
+    sendButton.setColour (juce::TextButton::buttonOnColourId, juce::Colour (175, 175, 175));
     sendButton.setColour (juce::TextButton::textColourOffId, juce::Colours::white);
     sendButton.setColour (juce::TextButton::textColourOnId, juce::Colours::white);
     addAndMakeVisible (sendButton);
@@ -180,7 +181,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     doublerSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     doublerSlider.setLookAndFeel(&myCustomLookAndFeel1);
     doublerSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    doublerSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
+    doublerSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (29, 29, 29));
     doublerSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     doublerSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     doublerSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
@@ -189,7 +190,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     doublerSliderLight.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     doublerSliderLight.setLookAndFeel(&myCustomLookAndFeel1Light);
     doublerSliderLight.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    doublerSliderLight.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
+    doublerSliderLight.setColour (juce::Slider::backgroundColourId, juce::Colour (29, 29, 29));
     doublerSliderLight.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     doublerSliderLight.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     doublerSliderLight.setColour (juce::Slider::thumbColourId, juce::Colours::white);
@@ -199,7 +200,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     volSlider.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     volSlider.setLookAndFeel(&myCustomLookAndFeel2);
     volSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    volSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
+    volSlider.setColour (juce::Slider::backgroundColourId, juce::Colour (29, 29, 29));
     volSlider.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     volSlider.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     volSlider.setColour (juce::Slider::thumbColourId, juce::Colours::white);
@@ -208,7 +209,7 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     volSliderLight.setTextBoxStyle (juce::Slider::NoTextBox, true, 50, 20);
     volSliderLight.setLookAndFeel(&myCustomLookAndFeel2Light);
     volSliderLight.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    volSliderLight.setColour (juce::Slider::backgroundColourId, juce::Colour (56, 56, 56));
+    volSliderLight.setColour (juce::Slider::backgroundColourId, juce::Colour (29, 29, 29));
     volSliderLight.setColour (juce::Slider::rotarySliderFillColourId, juce::Colours::white);
     volSliderLight.setColour (juce::Slider::rotarySliderOutlineColourId, juce::Colour(80, 80, 80));
     volSliderLight.setColour (juce::Slider::thumbColourId, juce::Colours::white);
@@ -383,16 +384,16 @@ void Squwbs4AudioProcessorEditor::textEditorReturnKeyPressed (juce::TextEditor& 
 void Squwbs4AudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    //g.fillAll (isDarkMode ? juce::Colour (56, 56, 56) : juce::Colour (240, 240, 240));
+    g.fillAll(juce::Colour (29, 29, 29));
     if(!isDarkMode){
         overlappingBigKnob.setBounds(0, 0, 341, 420);
         overlappingBigKnob.setVisible(true);
         overlappingBigKnobLight.setVisible(false);
-        doublerSlider.setBounds(31,239,105,105);
+        doublerSlider.setBounds(38,249,90,90);
         doublerSlider.setVisible(true);
         doublerSliderLight.setVisible(false);
         //doublerSlider.setLookAndFeel(&myCustomLookAndFeel1);
-        volSlider.setBounds(206,239,105,105);
+        volSlider.setBounds(212,249,90,90);
         volSlider.setVisible(true);
         volSliderLight.setVisible(false);
         //volSlider.setLookAndFeel(&myCustomLookAndFeel2);
@@ -407,11 +408,11 @@ void Squwbs4AudioProcessorEditor::paint (juce::Graphics& g)
         overlappingBigKnobLight.setBounds(0, 0, 341, 420);
         overlappingBigKnobLight.setVisible(true);
         overlappingBigKnob.setVisible(false);
-        doublerSliderLight.setBounds(31,239,105,105);
+        doublerSliderLight.setBounds(38,249,90,90);
         doublerSliderLight.setVisible(true);
         doublerSlider.setVisible(false);
         //doublerSlider.setLookAndFeel(&myCustomLookAndFeel1Light);
-        volSliderLight.setBounds(206,239,105,105);
+        volSliderLight.setBounds(212,249,90,90);
         volSliderLight.setVisible(true);
         volSlider.setVisible(false);
         //volSlider.setLookAndFeel(&myCustomLookAndFeel2Light);

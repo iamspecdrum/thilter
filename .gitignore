@@ -1,6 +1,6 @@
 .DS_Store
 Builds/
 JuceLibraryCode
-blender files/thilter_ui/animation_frames/
-blender files/thilter_ui/dark_ver_animation_frames_2.0/
-blender files/thilter_ui/prototype/knob_frames
+blender_files/thilter_ui/animation_frames/
+blender_files/thilter_ui/dark_ver_animation_frames_2.0/
+blender_files/thilter_ui/prototype/knob_frames

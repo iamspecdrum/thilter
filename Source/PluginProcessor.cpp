@@ -25,6 +25,8 @@ parameters (*this, &undoManager, "Parameters", createParameterLayout())
     widthParameter = parameters.getRawParameterValue("WIDTH_ID");
     parameters.addParameterListener("SKIN_ID",this);
     buttonParameter = parameters.getRawParameterValue("SKIN_ID");
+    parameters.addParameterListener("CHARACTER_ID",this);
+    secretCharacterParameter = parameters.getRawParameterValue("CHARACTER_ID");
 
 }
 
@@ -35,6 +37,7 @@ Squwbs4AudioProcessor::~Squwbs4AudioProcessor()
     //parameters.removeParameterListener("LP_ID",this);
     parameters.removeParameterListener("WIDTH_ID",this);
     parameters.removeParameterListener("SKIN_ID",this);
+    parameters.removeParameterListener("CHARACTER_ID",this);
 }
 void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
@@ -58,6 +61,11 @@ void Squwbs4AudioProcessor::parameterChanged(const juce::String& parameterID, fl
     }
 
     if(parameterID == "SKIN_ID")
+    {
+        juce::ignoreUnused(newValue);
+    }
+
+    if(parameterID == "CHARACTER_ID")
     {
         juce::ignoreUnused(newValue);
     }
@@ -429,6 +437,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout Squwbs4AudioProcessor::creat
         juce::ParameterID { "SKIN_ID", 1 },
         "SKIN",
         true
+    ));
+
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        juce::ParameterID { "CHARACTER_ID", 1 },
+        "CHARACTER",
+        false
     ));
 
     // Example 3: Boolean Parameter (Bypass Switch)

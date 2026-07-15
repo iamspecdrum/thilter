@@ -6,24 +6,52 @@
               companyName="squwbs">
   <MAINGROUP id="nxGT50" name="thilter">
     <GROUP id="{F6ECBD67-0E5A-B60F-49A8-BA7568AE3638}" name="resources">
-      <FILE id="epY0W7" name="bigknobimagestrip_light.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/light_mode/bigknob/raw_cuts/bigknobimagestrip_light.png"/>
-      <FILE id="rHHOfb" name="smallknob1imagestrip_light.png" compile="0"
-            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts/smallknob1imagestrip_light.png"/>
-      <FILE id="rhl5vS" name="smallknob2imagestrip_light.png" compile="0"
-            resource="1" file="blender files/thilter_ui/image_processing/light_mode/smallknob2/raw_cuts/smallknob2imagestrip_light.png"/>
-      <FILE id="yOvAHQ" name="buttonimagestrip_light.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/light_mode/button/raw_cuts/buttonimagestrip_light.png"/>
-      <FILE id="sp3dsO" name="bigknobimagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts/bigknobimagestrip.png"/>
-      <FILE id="loWQKO" name="smallknob1imagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/smallknob1/raw_cuts/smallknob1imagestrip.png"/>
-      <FILE id="mYSSqK" name="smallknob2imagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
-      <FILE id="J0uMBu" name="buttonimagestrip.png" compile="0" resource="1"
-            file="blender files/thilter_ui/image_processing/dark_mode/button/raw_cuts/buttonimagestrip.png"/>
+      <FILE id="wdbFz3" name="character.png" compile="0" resource="1" file="blender_files/thilter_ui/dream_girl_project/character.png"/>
+      <FILE id="JgVpo1" name="speech_bubble12.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble12.png"/>
+      <FILE id="FsXHJQ" name="speech_bubble11.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble11.png"/>
+      <FILE id="kYBie4" name="speech_bubble10.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble10.png"/>
+      <FILE id="ay3Oyl" name="speech_bubble09.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble09.png"/>
+      <FILE id="F3pVmq" name="speech_bubble08.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble08.png"/>
+      <FILE id="kJTFJA" name="speech_bubble07.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble07.png"/>
+      <FILE id="xBXXpz" name="speech_bubble06.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble06.png"/>
+      <FILE id="FjriPL" name="speech_bubble05.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble05.png"/>
+      <FILE id="ynDfn4" name="speech_bubble04.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble04.png"/>
+      <FILE id="VDbLx6" name="speech_bubble03.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble03.png"/>
+      <FILE id="eiR76i" name="speech_bubble02.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble02.png"/>
+      <FILE id="VpRpmD" name="speech_bubble01.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble01.png"/>
+      <FILE id="h1ppbi" name="speech_bubble00.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/speech_bubbles/speech_bubble00.png"/>
+      <FILE id="fM2Qcu" name="smallknob1imagestrip_light.png" compile="0"
+            resource="1" file="blender_files/thilter_ui/image_processing/light_mode/smallknob1/raw_cuts/smallknob1imagestrip_light.png"/>
+      <FILE id="b3ViF6" name="smallknob2imagestrip_light.png" compile="0"
+            resource="1" file="blender_files/thilter_ui/image_processing/light_mode/smallknob2/raw_cuts/smallknob2imagestrip_light.png"/>
+      <FILE id="y0wzar" name="bigknobimagestrip_light.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/image_processing/light_mode/bigknob/raw_cuts/bigknobimagestrip_light.png"/>
+      <FILE id="V14Vs5" name="buttonimagestrip_light.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/image_processing/light_mode/button/raw_cuts/buttonimagestrip_light.png"/>
+      <FILE id="xTB7pq" name="bigknobimagestrip.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts/bigknobimagestrip.png"/>
+      <FILE id="ZnwApp" name="smallknob1imagestrip.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/image_processing/dark_mode/smallknob1/raw_cuts/smallknob1imagestrip.png"/>
+      <FILE id="KfzsVH" name="smallknob2imagestrip.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/image_processing/dark_mode/smallknob2/raw_cuts/smallknob2imagestrip.png"/>
+      <FILE id="RHkvTQ" name="buttonimagestrip.png" compile="0" resource="1"
+            file="blender_files/thilter_ui/image_processing/dark_mode/button/raw_cuts/buttonimagestrip.png"/>
     </GROUP>
     <GROUP id="{5F4CBACC-4335-284C-CCF6-CC2176757CA0}" name="Source">
+      <FILE id="XnFdeu" name="secretOverlay.h" compile="0" resource="0" file="Source/secretOverlay.h"/>
       <FILE id="Qhb5Az" name="skinButton.h" compile="0" resource="0" file="Source/skinButton.h"/>
       <FILE id="fysZaN" name="overlappingBigKnob.h" compile="0" resource="0"
             file="Source/overlappingBigKnob.h"/>

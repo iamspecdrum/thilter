@@ -22,7 +22,13 @@ Squwbs4AudioProcessorEditor::Squwbs4AudioProcessorEditor (Squwbs4AudioProcessor&
 
     if (auto* skinParameter = audioProcessor.parameters.getRawParameterValue("SKIN_ID"))
         isDarkMode = skinParameter->load() > 0.5f;
+    
+    audioProcessor.parameters.addParameterListener("CHARACTER_ID",this);
+    
+    if (auto* secretCharacterParameter = audioProcessor.parameters.getRawParameterValue("CHARACTER_ID"))
+        isEasteregg = secretCharacterParameter->load() > 0.5f;
 
+        
     // Initialize license screen
     showLicenseScreen();
     //skinButton.addListener(this);
@@ -219,7 +225,10 @@ void Squwbs4AudioProcessorEditor::showMainUI()
     skinButtonLight.addListener (this);
     addAndMakeVisible(skinButton);
     addAndMakeVisible(skinButtonLight);
-
+    
+    addAndMakeVisible(secretCharacter);
+    secretCharacter.setVisible(isEasteregg);
+    secretCharacter.setBounds(0, 0, getWidth(), getHeight());
 
     gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "GAIN_ID", overlappingBigKnob);
@@ -234,6 +243,8 @@ void Squwbs4AudioProcessorEditor::showMainUI()
         audioProcessor.parameters, "WIDTH_ID", doublerSlider);
     widthAttachmentLight = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment> (
         audioProcessor.parameters, "WIDTH_ID", doublerSliderLight);
+    
+    
     updateSkinMode();
 
 }
@@ -311,6 +322,7 @@ Squwbs4AudioProcessorEditor::~Squwbs4AudioProcessorEditor()
     skinButton.removeListener (this);
     skinButtonLight.removeListener (this);
     audioProcessor.parameters.removeParameterListener("SKIN_ID", this);
+    audioProcessor.parameters.removeParameterListener("CHARACTER_ID", this);
     stopTimer();
 }
 
@@ -349,6 +361,18 @@ void Squwbs4AudioProcessorEditor::parameterChanged (const juce::String& paramete
             isDarkMode = newDarkMode;
             updateSkinMode();
         }
+    }
+    if (parameterID == "CHARACTER_ID")
+    {
+        const bool newIsEasteregg=newValue>0.5f;
+        {
+            if(isEasteregg != newIsEasteregg)
+            {
+                isEasteregg= newIsEasteregg;
+                secretCharacter.triggerSecretEasterEgg(newIsEasteregg);
+                secretCharacter.setVisible(newIsEasteregg);
+            }
+        };
     }
 }
 
@@ -449,8 +473,7 @@ void Squwbs4AudioProcessorEditor::resized()
         //gainSlider.setBounds (0, 0, 341, 420);
         
         skinButton.setBounds(150,361,40,40);
-        
-        
+        secretCharacter.setBounds(0, 0, getWidth(), getHeight());
         
     }
     else

@@ -16,6 +16,7 @@
 #include "smallKnob2Light.h"
 #include "overlappingBigKnob.h"
 #include "skinButton.h"
+#include "secretOverlay.h"
 //==============================================================================
 /**
 */
@@ -50,6 +51,7 @@ private:
     bool isLicensed = false;
     bool isValid = false;
     bool isDarkMode = true;
+    bool isEasteregg = false;
     int failedAttempts = 0;
     
     // Main UI components
@@ -79,6 +81,8 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volAttachmentLight;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> widthAttachmentLight;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachmentLight;
+    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> secretCharacterAttachment;
 
     void showLicenseScreen();
     void showMainUI();
@@ -87,6 +91,7 @@ private:
     void showError (const juce::String& message);
 
     float errorAlpha = 0.0f;
+    secretOverlay secretCharacter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Squwbs4AudioProcessorEditor)
 };

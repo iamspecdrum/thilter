@@ -5,8 +5,8 @@ from PIL import Image
 crop_area = (0, 0, 341, 420)  # Adjust these values as needed
 
 # 2. Define your directories
-input_folder = "/Users/bernardahn/Desktop/code/thilter/blender files/thilter_ui/dark_ver_animation_frames_2.0"
-output_folder = "/Users/bernardahn/Desktop/code/thilter/blender files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts"
+input_folder = "/Users/bernardahn/Desktop/code/thilter/blender_files/thilter_ui/dark_ver_animation_frames_2.0"
+output_folder = "/Users/bernardahn/Desktop/code/thilter/blender_files/thilter_ui/image_processing/dark_mode/bigknob/raw_cuts"
 
 # Ensure the output directory exists
 os.makedirs(output_folder, exist_ok=True)

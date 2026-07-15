@@ -24,7 +24,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 CreateAppDir=no
 ChangesAssociations=yes
-LicenseFile=F:\thilter\END USER LICENSE AGREEMENT (EULA).txt
+LicenseFile=C:\Users\a\Desktop\everything\projects\code\thilter\END USER LICENSE AGREEMENT (EULA).txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
 SolidCompression=yes
@@ -34,7 +34,7 @@ WizardStyle=modern dynamic
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "F:\thilter\Builds\VisualStudio2022\x64\Release\VST3\thilter.vst3\Contents\x86_64-win\thilter.vst3"; DestDir: "C:\Program Files\Common Files\VST3"; Flags: ignoreversion
+Source: "C:\Users\a\Desktop\everything\projects\code\thilter\Builds\VisualStudio2022\x64\Release\VST3\thilter.vst3\Contents\x86_64-win\thilter.vst3"; DestDir: "C:\Program Files\Common Files\VST3"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

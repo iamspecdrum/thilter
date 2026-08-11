@@ -347,10 +347,18 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         
         const float wetLeft = ((left) * skewedMixFloat);
         const float wetRight =  ((right) * skewedMixFloat);
-        const float* tempWet=eq1.match(wetLeft,wetRight);
-        const float* wet=midSide.process(tempWet[0],tempWet[1]);
-        const float processedLeft = advLimiterL.processSample (juce::jlimit (-1.0f, 1.0f,((left * (1.0f - skewedMixFloat)) + wet[0] * 48.0f) * volValue));
-        const float processedRight = advLimiterR.processSample (juce::jlimit (-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + wet[1] * 48.0f) * volValue));
+        //const float* tempWet=eq1.match(wetLeft,wetRight);
+        //const float* wet=midSide.process(tempWet[0],tempWet[1]);
+        //const float processedLeft = advLimiterL.processSample (juce::jlimit (-1.0f, 1.0f,((left * (1.0f - skewedMixFloat)) + wet[0] * 48.0f) * volValue));
+        //const float processedRight = advLimiterR.processSample (juce::jlimit (-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + wet[1] * 48.0f) * volValue));
+        
+        const float* Wet=eq1.match(wetLeft,wetRight);
+        //const float* wet=midSide.process(tempWet[0],tempWet[1]);
+        const float newWetLeft = juce::jlimit(-1.0f, 1.0f, ((left * (1.0f - skewedMixFloat)) + Wet[0] * 48.0f) * volValue);
+        const float newWetRight = juce::jlimit(-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + Wet[1] * 48.0f) * volValue);
+        const float* midSideProcessedBuffer = midSide.process(newWetLeft, newWetRight);
+        const float processedLeft = advLimiterL.processSample (midSideProcessedBuffer[0]);
+        const float processedRight = advLimiterR.processSample (midSideProcessedBuffer[1]);
 
         buffer.setSample (0, sample, processedLeft);
         if (numChannels > 1)

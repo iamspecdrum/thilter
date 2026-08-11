@@ -306,7 +306,44 @@ private:
             delaySamplesAlt = kMaxDelaySamples - 1;
     }
 };
-
+class MidSide
+{
+public:
+    MidSide():
+    ratio (0.5f)
+    {
+      left = 0.0f;
+      right = 0.0f;
+      output[0] = 0.0f;
+      output[1] = 0.0f;
+    }
+    ~MidSide()
+    {
+    }
+    void setRatio(float newRatio)
+    {
+        ratio = fminf(1.0f, fmaxf(0.0f, newRatio));
+    }
+    float* process(float left, float right)
+    {
+        mid = (left + right) * 0.5f;
+        side = (left-right) * 0.5f;
+        side = side * ratio;
+        mid = mid * (1.0f - ratio);
+        left = mid + side;
+        right = mid - side;
+        output[0] = left;
+        output[1] = right;
+        return output;
+    }
+private:
+    float left;
+    float right;
+    float mid;
+    float side;
+    float ratio;
+    float output[2];
+};
 class L_Riley_LP
 {
 
@@ -959,6 +996,7 @@ public:
     juce::dsp::IIR::Filter<float> lowPassLeft;
     juce::dsp::IIR::Filter<float> lowPassRight;
     AudioDoubler doubler;
+    MidSide midSide;
     DefaultLimiter limiterl;
     DefaultLimiter limiterr;
     AdvancedLimiter advLimiterL;

@@ -273,6 +273,8 @@ void Squwbs4AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     lowPassRight.reset();
     advLimiterL.prepareToPlay(sampleRate, samplesPerBlock);
     advLimiterR.prepareToPlay(sampleRate, samplesPerBlock);
+    volumeSmoother.reset (sampleRate, 0.02);
+    volumeSmoother.setCurrentAndTargetValue (volParameter != nullptr ? volParameter->load() : 1.0f);
 
 }
 
@@ -319,6 +321,8 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     {
         const float mixValue = gainParameter != nullptr ? gainParameter->load() : 0.5f;
         const float volValue = volParameter != nullptr ? volParameter->load() : 1.0f;
+        volumeSmoother.setTargetValue (volValue);
+        const float smoothedVolume = volumeSmoother.getNextValue();
         const float widthValue = widthParameter != nullptr ? widthParameter->load() : 0.5f;
         if (widthValue < 0.5f)
         {
@@ -354,11 +358,15 @@ void Squwbs4AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         
         const float* Wet=eq1.match(wetLeft,wetRight);
         //const float* wet=midSide.process(tempWet[0],tempWet[1]);
-        const float newWetLeft = juce::jlimit(-1.0f, 1.0f, ((left * (1.0f - skewedMixFloat)) + Wet[0] * 48.0f) * volValue);
-        const float newWetRight = juce::jlimit(-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + Wet[1] * 48.0f) * volValue);
+        //const float newWetLeft = juce::jlimit(-1.0f, 1.0f, ((left * (1.0f - skewedMixFloat)) + Wet[0] * 48.0f) * volValue);
+        //const float newWetRight = juce::jlimit(-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + Wet[1] * 48.0f) * volValue);
+        const float newWetLeft = juce::jlimit(-1.0f, 1.0f, ((left * (1.0f - skewedMixFloat)) + Wet[0] * 48.0f));
+        const float newWetRight = juce::jlimit(-1.0f, 1.0f, ((right * (1.0f - skewedMixFloat)) + Wet[1] * 48.0f));
         const float* midSideProcessedBuffer = midSide.process(newWetLeft, newWetRight);
-        const float processedLeft = advLimiterL.processSample (midSideProcessedBuffer[0]);
-        const float processedRight = advLimiterR.processSample (midSideProcessedBuffer[1]);
+        //const float processedLeft = advLimiterL.processSample (midSideProcessedBuffer[0]);
+        //const float processedRight = advLimiterR.processSample (midSideProcessedBuffer[1]);
+        const float processedLeft = advLimiterL.processSample (midSideProcessedBuffer[0])*smoothedVolume;
+        const float processedRight = advLimiterR.processSample (midSideProcessedBuffer[1])*smoothedVolume;
 
         buffer.setSample (0, sample, processedLeft);
         if (numChannels > 1)
